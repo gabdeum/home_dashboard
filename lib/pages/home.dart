@@ -35,70 +35,7 @@ class Home extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: CustomCard(
-                        title: 'Weather',
-                        child: FutureBuilder(
-                          future: newWeather.getCurrentWeather(),
-                          builder: (context, data){
-                            if (data.connectionState == ConnectionState.done && data.data != null){
-                              Map weather = data.data as Map;
-                              return Row(
-                                children: [
-                                  Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Expanded(child: SvgPicture.asset(weather['icon'])),
-                                            Text(weather['main'], textAlign: TextAlign.center, style: MyTextStyle().large),
-                                            const SizedBox(height: 10.0,),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Text('${weather['currentTemp']}°', textAlign: TextAlign.center, style: MyTextStyle().large),
-                                                const SizedBox(width: 10,),
-                                                Text('${weather['min']}°\n${weather['max']}°', textAlign: TextAlign.center, style: MyTextStyle().small)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                  ),
-                                  const SizedBox(width: 10.0,),
-                                  Expanded(
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: (weather['daily'] as List).length,
-                                      itemBuilder: (context, index){
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 3),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              SizedBox(width: 83.0, child: Text(weather['daily'][index]['day'], style: MyTextStyle().small)),
-                                              Flexible(child: SvgPicture.asset(weather['daily'][index]['icon'], width: 30,), fit: FlexFit.tight),
-                                              SizedBox(width: 25.0, child: Text('${weather['daily'][index]['min']}°', textAlign: TextAlign.end, style: MyTextStyle().small)),
-                                              SizedBox(width: 35.0, child: Text('${weather['daily'][index]['max']}°', textAlign: TextAlign.end, style: MyTextStyle().small)),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  )
-                                ],
-                              );
-                            }
-                            else {
-                              return Center(child: CircularProgressIndicator(color: MyColors().darkColor1,));
-                            }
-                          },
-                        ),
-                      ),
-                    ),
+                    CustomWeatherCard(newWeather: newWeather),
                     const SizedBox(width: 2.5,),
                     Expanded(
                       child: CustomCard(
