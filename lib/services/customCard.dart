@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:home_dashboard/services/schedule.dart';
 
 // class CustomCard extends StatefulWidget {
 //
@@ -93,6 +94,49 @@ class CustomCard extends StatelessWidget {
           ),
         ),
         color: MyColors().color1
+    );
+  }
+}
+
+class CustomScheduleCard extends StatelessWidget {
+  const CustomScheduleCard({
+    Key? key,
+    required this.newSchedule,
+  }) : super(key: key);
+
+  final ScheduleStream newSchedule;
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      flex: 3,
+      child: CustomCard(
+        title: 'Station ${newSchedule.station}',
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
+          child: StreamBuilder(
+              stream: newSchedule.stream,
+              builder: (context, data){
+                if(data.connectionState == ConnectionState.active){
+                  List newStreamList = [];
+                  newStreamList = data.data as List;
+                  return ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount:newStreamList[0].length,
+                      itemBuilder: (context, index){
+                        return ListTile(
+                          leading: SvgPicture.asset('assets/m${newSchedule.code}.svg', width: 40.0, height: 40.0,),
+                          title: Text(newStreamList[1][index].toString(), style: MyTextStyle().large,),
+                          trailing: Text(newStreamList[0][index].toString(), style: MyTextStyle().large),
+                        );
+                      });
+                }
+                else{
+                  return Center(child: CircularProgressIndicator(color: MyColors().darkColor1,));
+                }
+              }),
+        ),),
     );
   }
 }

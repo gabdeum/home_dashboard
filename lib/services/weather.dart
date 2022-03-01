@@ -65,8 +65,6 @@ class FutureWeather {
     String _sunrise = dtFormat.format(DateTime.fromMillisecondsSinceEpoch(_data['current']['sunrise'] * 1000).toUtc().add(Duration(hours: gmt)));
     String _sunset = dtFormat.format(DateTime.fromMillisecondsSinceEpoch(_data['current']['sunset'] * 1000).toUtc().add(Duration(hours: gmt)));
 
-    print('$_sunrise - $_sunset');
-
     Map weather = {
       'main' : convertToTitleCase(_data['current']['weather'][0]['main'].toString()),
       'description' : convertToTitleCase(_data['current']['weather'][0]['description'].toString()),
