@@ -3,59 +3,7 @@ import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:home_dashboard/services/schedule.dart';
 import 'package:home_dashboard/services/weather.dart';
-
-// class CustomCard extends StatefulWidget {
-//
-//   final Widget child;
-//   final String title;
-//   const CustomCard({Key? key, required this.child, required this.title}) : super(key: key);
-//
-//   @override
-//   _CustomCardState createState() => _CustomCardState(child: child, title: title);
-// }
-//
-// class _CustomCardState extends State<CustomCard> {
-//
-//
-//   Widget child;
-//   String title;
-//   _CustomCardState({required this.child, required this.title});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-//         elevation: 5.0,
-//         child: Padding(
-//           padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 20.0),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.stretch,
-//             children: [
-//               Stack(
-//                 children: [
-//                   Container(
-//                     height: 35,
-//                     width: title.length.toDouble() * 40,
-//                     decoration: BoxDecoration(
-//                         color: MyColors().lightColor1,
-//                         borderRadius: BorderRadius.circular(20)),
-//                   ),
-//                   Padding(
-//                     padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-//                     child: Text(title, style: MyTextStyle().title),
-//                   )
-//                 ],
-//               ),
-//               Expanded(
-//                 child: child,
-//               )
-//             ],
-//           ),
-//         ),
-//         color: MyColors().color1
-//     );
-//   }
-// }
+import 'clock.dart';
 
 class CustomCard extends StatelessWidget {
 
@@ -213,6 +161,65 @@ class CustomWeatherCard extends StatelessWidget {
               return Center(child: CircularProgressIndicator(color: MyColors().darkColor1,));
             }
           },
+        ),
+      ),
+    );
+  }
+}
+
+class CustomClockCard extends StatelessWidget {
+  const CustomClockCard({
+    Key? key,
+    required this.newWeather,
+  }) : super(key: key);
+
+  final FutureWeather newWeather;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: CustomCard(
+        title: 'Clock',
+        child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Clock(),
+                const SizedBox(height: 20.0,),
+                FutureBuilder(
+                    future: newWeather.getCurrentWeather(),
+                    builder: (context, data){
+                      if (data.connectionState == ConnectionState.done && data.data != null){
+                        Map weather = data.data as Map;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset('assets/sunrise.svg', height: 60.0,),
+                                Text('${weather['sunrise']}', textAlign: TextAlign.center,style: MyTextStyle().medium,)
+                              ],
+                            ),
+                            // const SizedBox(width: 40.0,),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset('assets/sunset.svg', height: 60.0,),
+                                Text('${weather['sunset']}', textAlign: TextAlign.center,style: MyTextStyle().medium,)
+                              ],
+                            )
+                          ],
+                        );
+                      }
+                      else {
+                        return Center(child: CircularProgressIndicator(color: MyColors().darkColor1,));
+                      }
+                    }
+                )
+              ],
+            )
         ),
       ),
     );

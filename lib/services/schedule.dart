@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
-import 'customCard.dart';
+import 'customCards.dart';
 import 'formatClasses.dart';
 
 class ScheduleStream {

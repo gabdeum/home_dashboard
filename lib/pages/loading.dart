@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:home_dashboard/services/schedule.dart';
-import 'dart:async';
-import 'package:home_dashboard/services/weather.dart';
 
 class Loading extends StatelessWidget {
   const Loading({Key? key}) : super(key: key);
