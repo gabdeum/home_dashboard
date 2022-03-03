@@ -36,46 +36,54 @@ class FutureWeather {
   Future getCurrentWeather() async {
 
     String _url = 'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,hourly,alerts&units=metric&appid=$apiKey';
-    Response _response = await get(Uri.parse(_url));
+    Map weather = {};
 
-    Map _data = const JsonDecoder().convert(_response.body);
+    try {
+      Response _response = await get(Uri.parse(_url));
 
-    List _daily = [];
-    List _dailyData = _data['daily'] as List;
+      Map _data = const JsonDecoder().convert(_response.body);
 
-    List _daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      List _daily = [];
+      List _dailyData = _data['daily'] as List;
 
-    for (int i = 1; i < _dailyData.length; i++){
+      List _daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-      String _day = _daysOfWeek[DateTime.fromMillisecondsSinceEpoch(_dailyData[i]['dt'] * 1000).toUtc().weekday - 1];
+      for (int i = 1; i < _dailyData.length; i++){
 
-      Map _dailyWeather = {
-        'day' : _day,
-        'icon' : 'assets/${weatherIcons['${_dailyData[i]['weather'][0]['icon']}']}',
-        'min' : (_dailyData[i]['temp']['min'] as double).round().toString(),
-        'max' : (_dailyData[i]['temp']['max'] as double).round().toString()
+        String _day = _daysOfWeek[DateTime.fromMillisecondsSinceEpoch(_dailyData[i]['dt'] * 1000).toUtc().weekday - 1];
+
+        Map _dailyWeather = {
+          'day' : _day,
+          'icon' : 'assets/${weatherIcons['${_dailyData[i]['weather'][0]['icon']}']}',
+          'min' : (_dailyData[i]['temp']['min'] as double).round().toString(),
+          'max' : (_dailyData[i]['temp']['max'] as double).round().toString()
+        };
+
+        _daily.add(_dailyWeather);
+
+      }
+
+      final DateFormat dtFormat = DateFormat.jm();
+
+      String _sunrise = dtFormat.format(DateTime.fromMillisecondsSinceEpoch(_data['current']['sunrise'] * 1000).toUtc().add(Duration(hours: gmt)));
+      String _sunset = dtFormat.format(DateTime.fromMillisecondsSinceEpoch(_data['current']['sunset'] * 1000).toUtc().add(Duration(hours: gmt)));
+
+      weather = {
+        'main' : convertToTitleCase(_data['current']['weather'][0]['main'].toString()),
+        'description' : convertToTitleCase(_data['current']['weather'][0]['description'].toString()),
+        'currentTemp' : (_data['current']['temp'] as double).round().toString(),
+        'min' : (_data['daily'][0]['temp']['min'] as double).round().toString(),
+        'max' : (_data['daily'][0]['temp']['max'] as double).round().toString(),
+        'icon' : 'assets/${weatherIcons['${_data['current']['weather'][0]['icon']}']}',
+        'sunrise' : _sunrise,
+        'sunset' : _sunset,
+        'daily' : _daily,
       };
-
-      _daily.add(_dailyWeather);
-
     }
 
-    final DateFormat dtFormat = DateFormat.jm();
-
-    String _sunrise = dtFormat.format(DateTime.fromMillisecondsSinceEpoch(_data['current']['sunrise'] * 1000).toUtc().add(Duration(hours: gmt)));
-    String _sunset = dtFormat.format(DateTime.fromMillisecondsSinceEpoch(_data['current']['sunset'] * 1000).toUtc().add(Duration(hours: gmt)));
-
-    Map weather = {
-      'main' : convertToTitleCase(_data['current']['weather'][0]['main'].toString()),
-      'description' : convertToTitleCase(_data['current']['weather'][0]['description'].toString()),
-      'currentTemp' : (_data['current']['temp'] as double).round().toString(),
-      'min' : (_data['daily'][0]['temp']['min'] as double).round().toString(),
-      'max' : (_data['daily'][0]['temp']['max'] as double).round().toString(),
-      'icon' : 'assets/${weatherIcons['${_data['current']['weather'][0]['icon']}']}',
-      'sunrise' : _sunrise,
-      'sunset' : _sunset,
-      'daily' : _daily,
-    };
+    catch (e){
+      print(e);
+    }
 
     return weather;
 

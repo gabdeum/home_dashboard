@@ -16,7 +16,9 @@ class MyTextStyle {
   TextStyle title = TextStyle(color: MyColors().textColor, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 55.0);
   TextStyle clock = TextStyle(color: MyColors().textColor, fontFamily: 'Roboto', fontSize: 80.0);
   TextStyle large = TextStyle(color: MyColors().textColor, fontFamily: 'Roboto', fontSize: 30.0);
+  TextStyle largeDark = TextStyle(color: MyColors().darkColor1, fontFamily: 'Roboto', fontWeight: FontWeight.w500, fontSize: 30.0);
   TextStyle medium = TextStyle(color: MyColors().textColor, fontFamily: 'Roboto', fontSize: 18.0);
+  TextStyle mediumDark = TextStyle(color: MyColors().darkColor1, fontFamily: 'Roboto', fontSize: 18.0);
   TextStyle small = TextStyle(color: MyColors().textColor, fontFamily: 'Roboto', fontSize: 16.0);
 
 }
