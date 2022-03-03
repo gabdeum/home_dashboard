@@ -20,6 +20,7 @@ class MyTextStyle {
   TextStyle medium = TextStyle(color: MyColors().textColor, fontFamily: 'Roboto', fontSize: 18.0);
   TextStyle mediumDark = TextStyle(color: MyColors().darkColor1, fontFamily: 'Roboto', fontSize: 18.0);
   TextStyle small = TextStyle(color: MyColors().textColor, fontFamily: 'Roboto', fontSize: 16.0);
+  TextStyle smallDark = TextStyle(color: MyColors().darkColor1, fontFamily: 'Roboto', fontSize: 16.0);
 
 }
 

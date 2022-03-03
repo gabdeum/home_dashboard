@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class GeoLoc {
 
-  List<Map> location = [];
+  Map location = {};
   final String address;
   final String key = 'AIzaSyCBsCjKGavUAdWN6hTCVQWBH81ARmNqBUI';
 
@@ -18,14 +18,11 @@ class GeoLoc {
     final Map _data = const JsonDecoder().convert(_response.body);
     final List _dataList =  _data['results'] as List;
 
-    for (var _element in _dataList){
-
-      location.add({
-        'fullName' : _element['formatted_address'],
-        'lat' : _element['geometry']['location']['lat'],
-        'lon' : _element['geometry']['location']['lng']
-      });
-    }
+    location = {
+      'fullName' : _dataList[0]['formatted_address'],
+      'lat' : _dataList[0]['geometry']['location']['lat'],
+      'lon' : _dataList[0]['geometry']['location']['lng']
+    };
 
     return location;
 
