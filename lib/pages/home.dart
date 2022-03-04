@@ -12,7 +12,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final Schedule newSchedule = Schedule(type: 'metros', code: '13', station: 'Guy Moquet', way: 'A');
+    final Schedule newSchedule = Schedule(lineDetails: [{'type': 'metros', 'code': '13', 'stationCode': 'Guy+Moquet', 'station': 'Guy Moquet', 'way': 'A'}]);
     final FutureWeather newWeather = FutureWeather(lat: 48.8909971, lon: 2.3281126, gmt: 1);
     
     return SafeArea(

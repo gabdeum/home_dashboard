@@ -32,7 +32,6 @@ class FutureWeather {
     '50n' : 'mist.svg'
   };
 
-
   Future getCurrentWeather() async {
 
     String _url = 'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&exclude=minutely,hourly,alerts&units=metric&appid=$apiKey';
