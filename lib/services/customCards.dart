@@ -53,7 +53,7 @@ class CustomScheduleCard extends StatelessWidget {
     required this.newSchedule,
   }) : super(key: key);
 
-  final ScheduleStream newSchedule;
+  final Schedule newSchedule;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class CustomScheduleCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
           child: StreamBuilder(
-              stream: newSchedule.stream,
+              stream: newSchedule.getScheduleStream(),
               builder: (context, data){
                 if(data.connectionState == ConnectionState.active){
                   List newStreamList = [];

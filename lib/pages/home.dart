@@ -12,11 +12,8 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final ScheduleStream newSchedule = ScheduleStream(type: 'metros', code: '13', station: 'Guy Moquet', way: 'A');
+    final Schedule newSchedule = Schedule(type: 'metros', code: '13', station: 'Guy Moquet', way: 'A');
     final FutureWeather newWeather = FutureWeather(lat: 48.8909971, lon: 2.3281126, gmt: 1);
-
-    newSchedule.stream;
-    newWeather.getCurrentWeather();
     
     return SafeArea(
       child: Container(

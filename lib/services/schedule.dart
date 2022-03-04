@@ -7,60 +7,65 @@ import 'dart:convert';
 import 'customCards.dart';
 import 'formatClasses.dart';
 
-class ScheduleStream {
+class Schedule {
 
   final String type; // The type of transport (metros, rers, tramways, buses or noctiliens)
   final String code; //The code of transport line (e.g. 8)
   final String station; //Slug of the station name (e.g. Guy Moquet)
   final String way; //Way of the line (Available values: A, R, A+R)
 
-  final _controller = StreamController<List>();
-  Stream<List> get stream => _controller.stream;
-
   // final String url;
-  ScheduleStream({required this.type, required this.code, required this.station, required this.way}) {
+  Schedule({required this.type, required this.code, required this.station, required this.way});
+
+  Stream getScheduleStream() {
+
+    final _controller = StreamController<List>();
+
+    getSchedule() async {
+
+      List _destination = []; //Direction name
+      List _schedules = []; //When are the next schedules
+
+      String _stationCode = station.replaceAll(' ', '+');
+      String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/$type/$code/$_stationCode/$way';
+
+      Response _response = await get(Uri.parse(_url));
+      Map data = const JsonDecoder().convert(_response.body);
+
+      try{
+        List _dataList = List.castFrom(data['result']['schedules']);
+
+        for (var element in _dataList) {
+          _destination.add(element['destination'].toString());
+
+          String message = element['message'].toString().replaceFirst(' mn', '');
+          bool isInt = int.tryParse(message) != null;
+
+          if(isInt == true){
+            String intSchedule = int.tryParse(message) != 0 ? '${(int.tryParse(message)! - 1).toString()} min' : "Train a l'approche";
+            _schedules.add(intSchedule);
+          }
+          else{
+            _schedules.add(message);
+          }
+        }
+      }
+
+      catch (e){
+        _destination = ['No data found'];
+        _schedules = ['-'];
+        print(e);
+      }
+      _controller.sink.add([_schedules, _destination]);
+    }
+
     getSchedule();
     Timer.periodic(const Duration(seconds: 30), (t) {
       getSchedule();
     });
-  }
 
-  getSchedule() async {
+    return _controller.stream;
 
-    List _destination = []; //Direction name
-    List _schedules = []; //When are the next schedules
-
-    String _stationCode = station.replaceAll(' ', '+');
-    String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/$type/$code/$_stationCode/$way';
-
-    Response _response = await get(Uri.parse(_url));
-    Map data = const JsonDecoder().convert(_response.body);
-
-    try{
-      List _dataList = List.castFrom(data['result']['schedules']);
-
-      for (var element in _dataList) {
-        _destination.add(element['destination'].toString());
-
-        String message = element['message'].toString().replaceFirst(' mn', '');
-        bool isInt = int.tryParse(message) != null;
-
-        if(isInt == true){
-          String intSchedule = int.tryParse(message) != 0 ? '${(int.tryParse(message)! - 1).toString()} min' : "Train a l'approche";
-          _schedules.add(intSchedule);
-        }
-        else{
-          _schedules.add(message);
-        }
-      }
-    }
-
-    catch (e){
-      _destination = ['No data found'];
-      _schedules = ['-'];
-      print(e);
-    }
-    _controller.sink.add([_schedules, _destination]);
   }
 
   // getStations() async {
