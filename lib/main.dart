@@ -4,7 +4,7 @@ import 'pages/home.dart';
 
 void main() => runApp(MaterialApp(
   routes: {
-    '/': (context) => const Settings(),
-    '/home': (context) => const Home()
+    '/settings': (context) => const Settings(),
+    '/': (context) => const Home()
   },
 ));
