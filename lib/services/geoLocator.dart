@@ -1,5 +1,6 @@
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 
 class GeoLoc {
 
@@ -19,9 +20,10 @@ class GeoLoc {
     final List _dataList =  _data['results'] as List;
 
     location = {
-      'fullName' : _dataList[0]['formatted_address'],
-      'lat' : _dataList[0]['geometry']['location']['lat'],
-      'lon' : _dataList[0]['geometry']['location']['lng']
+      'leading' : _dataList.isEmpty ? Icons.not_listed_location : Icons.check_circle,
+      'fullName' : _dataList.isEmpty ? "Couldn't find exact location, please precise" : _dataList[0]['formatted_address'],
+      'lat' : _dataList.isEmpty ? '' : _dataList[0]['geometry']['location']['lat'],
+      'lon' : _dataList.isEmpty ? '' : _dataList[0]['geometry']['location']['lng']
     };
 
     return location;
