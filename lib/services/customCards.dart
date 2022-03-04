@@ -9,7 +9,8 @@ class CustomCard extends StatelessWidget {
 
   final Widget child;
   final String title;
-  const CustomCard({required this.child, required this.title, Key? key}) : super(key: key);
+  final bool hasSettingButton;
+  const CustomCard({required this.child, required this.title, this.hasSettingButton = false, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,19 @@ class CustomCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                     child: Text(title, style: MyTextStyle().title),
-                  )
+                  ),
+                  hasSettingButton ? Positioned(
+                    right: 0,
+                    top: 0,
+                    child: FloatingActionButton(
+                      mini: true,
+                      onPressed: (){
+                        Navigator.pushNamed(context, '/settings');
+                      },
+                      child: const Icon(Icons.settings,),
+                      backgroundColor: MyColors().darkColor1,
+                        ),
+                  ) : Container(width: 0,)
                 ],
               ),
               Expanded(
@@ -48,18 +61,16 @@ class CustomCard extends StatelessWidget {
 }
 
 class CustomScheduleCard extends StatelessWidget {
-  const CustomScheduleCard({
-    Key? key,
-    required this.newSchedule,
-  }) : super(key: key);
 
   final Schedule newSchedule;
+  const CustomScheduleCard({Key? key, required this.newSchedule}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       flex: 3,
       child: CustomCard(
+        hasSettingButton: true,
         title: 'Schedules',
         child: Padding(
           padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
