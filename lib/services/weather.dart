@@ -113,7 +113,6 @@ String? convertToTitleCase(String? text) {
     }
     return '';
   });
-
   // Join/Merge all words back to one String
   return capitalizedWords.join(' ');
 }

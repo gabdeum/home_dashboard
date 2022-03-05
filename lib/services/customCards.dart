@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_dashboard/pages/settings.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:home_dashboard/services/schedule.dart';
@@ -41,7 +42,7 @@ class CustomCard extends StatelessWidget {
                     child: FloatingActionButton(
                       mini: true,
                       onPressed: (){
-                        Navigator.pushNamed(context, '/settings');
+                        Navigator.of(context).push(createRoute());
                       },
                       child: const Icon(Icons.settings,),
                       backgroundColor: MyColors().darkColor1,
@@ -234,4 +235,22 @@ class CustomClockCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Route createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => const Settings(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }
