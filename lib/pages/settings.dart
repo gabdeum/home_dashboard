@@ -5,7 +5,6 @@ import 'package:geolocator/geolocator.dart';
 
 class Settings extends StatefulWidget {
 
-
   const Settings({Key? key}) : super(key: key);
 
   @override
@@ -16,9 +15,13 @@ class _SettingsState extends State<Settings> {
 
   final addressController = TextEditingController();
   Map _newLoc = {};
+  dynamic iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
+  List<int> lineNumber = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+  int dropdownValue = 1;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       backgroundColor: MyColors().bgColor,
@@ -41,36 +44,36 @@ class _SettingsState extends State<Settings> {
                   children: [
                     Text('Transport schedules', style: MyTextStyle().largeDark,),
                     const SizedBox(height: 20.0,),
-                    Container(
-                      constraints: const BoxConstraints(maxWidth: 400),
-                      child: TextField(
-                        // controller: addressController,
+                    SizedBox(
+                      height: 55.0,
+                      width: 170.0,
+                      child: DropdownButtonFormField(
+                        isDense: true,
                         decoration: InputDecoration(
-                            isDense: true,
-                            border: OutlineInputBorder(
+                          isDense: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(40.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(40.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(40.0),
-                                borderSide: BorderSide(color: MyColors().darkColor1, width: 2.0)
-                            ),
-                            hintText: 'Line 13',
-                            hintStyle: MyTextStyle().mediumDark,
-                            labelText: 'Line number',
-                            labelStyle: MyTextStyle().mediumDark,
-                            prefixIcon: Icon(Icons.location_pin, color: MyColors().darkColor1,),
-                            suffixIcon: IconButton(
-                              icon: Icon(Icons.close, color: MyColors().darkColor1,),
-                              onPressed: () {
-                                // addressController.clear();
-                                _newLoc = {};
-                                setState(() {});
-                              },
-                            )
+                              borderSide: BorderSide(color: MyColors().darkColor1, width: 2.0)
+                          ),
+                          labelText: 'Subway line',
+                          labelStyle: MyTextStyle().mediumDark,
+                          prefixIcon: Icon(Icons.directions_subway, color: MyColors().darkColor1,),
                         ),
-                        keyboardType: TextInputType.streetAddress,
-                        textInputAction: TextInputAction.search,
-                        onSubmitted: (address) async {},
+                        value: dropdownValue,
+                        items: lineNumber.map<DropdownMenuItem<int>>((value) {
+                          return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text('Line $value'),
+                          );
+                        }).toList(),
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            dropdownValue = newValue!;
+                          });
+                        },
                       ),
                     ),
                   ],
@@ -123,11 +126,18 @@ class _SettingsState extends State<Settings> {
                         const SizedBox(width: 10.0,),
                         FloatingActionButton(
                           onPressed: () async {
+                            setState(() {
+                              iconSearchLocation = SizedBox(
+                                child: CircularProgressIndicator(color: MyColors().textColor, strokeWidth: 2.0,),
+                                width: 18.0,
+                                height: 18.0,
+                              );
+                            });
                             Position newPosition = await _determinePosition();
                             _newLoc = await GeoLoc(latitude: newPosition.latitude, longitude: newPosition.longitude).getLocFromLatLong();
-                            setState(() {});
+                            setState(() {iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);});
                           },
-                          child: Icon(Icons.location_searching, color: MyColors().textColor,),
+                          child: iconSearchLocation,
                           backgroundColor: MyColors().color1,
                           elevation: 0.0,
                         )
