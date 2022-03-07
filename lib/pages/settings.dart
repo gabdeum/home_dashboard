@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:home_dashboard/services/geoLocator.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:home_dashboard/services/schedule.dart';
 
 class Settings extends StatefulWidget {
 
@@ -76,6 +77,14 @@ class _SettingsState extends State<Settings> {
                         },
                       ),
                     ),
+                    FloatingActionButton(onPressed: () async {
+                      Schedule _newSchedule = Schedule(lineDetails: [{
+                        'type' : 'metros',
+                        'code' : '13'
+                      }]);
+                      await _newSchedule.getStations();
+                      await _newSchedule.getDirections();
+                    })
                   ],
                 ),
               ),

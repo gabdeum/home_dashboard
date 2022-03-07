@@ -1,18 +1,8 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
-import 'customCards.dart';
-import 'formatClasses.dart';
-
 class Schedule {
-
-  // final String? type; // The type of transport (metros, rers, tramways, buses or noctiliens)
-  // final String? code; //The code of transport line (e.g. 8)
-  // final String? station; //Slug of the station name (e.g. Guy Moquet)
-  // final String? way; //Way of the line (Available values: A, R, A+R)
 
   //List of Map with:
   //    type (metros, rers, tramways, buses or noctiliens)
@@ -20,6 +10,8 @@ class Schedule {
   //    station (e.g. Guy Moquet)
   //    way (Available values: A, R, A+R)
   final List<Map> lineDetails;
+  List<Map> stations = [];
+  Map directions = {};
 
   // final String url;
   Schedule({required this.lineDetails});
@@ -79,75 +71,69 @@ class Schedule {
 
   }
 
-  // getStations() async {
-  //
-  //   List<Map> _destination = [];
-  //
-  //   String _url = 'https://api-ratp.pierre-grimaud.fr/v4/stations/$type/$code';
-  //   Response _response = await get(Uri.parse(_url));
-  //   Map data = const JsonDecoder().convert(_response.body);
-  //
-  //   try{
-  //     List _dataList = List.castFrom(data['result']['stations']);
-  //
-  //     for (var element in _dataList) {
-  //
-  //       _destination.add({
-  //         'name' : element['name'],
-  //         'slug' : element['slug']
-  //       });
-  //
-  //     }
-  //   }
-  //
-  //   catch(e){
-  //     _destination = [{'name' : 'No station to display'}];
-  //     print(e);
-  //   }
-  //
-  // }
+  Future getStations() async {
+
+    List<Map> _destination = [];
+
+    for (var lineDetail in lineDetails) {
+
+      String _url = 'https://api-ratp.pierre-grimaud.fr/v4/stations/${lineDetail['type']}/'
+          '${lineDetail['code']}';
+      Response _response = await get(Uri.parse(_url));
+      Map _data = const JsonDecoder().convert(_response.body);
+
+      try{
+        List _dataList = List.castFrom(_data['result']['stations']);
+
+        for (var element in _dataList) {
+          _destination.add({
+            'name' : element['name'],
+            'slug' : element['slug']
+          });
+        }
+      }
+
+      catch(e){
+        _destination = [{'name' : 'No station to display'}];
+        print(e);
+      }
+
+      print(_destination);
+      stations = _destination;
+      return _destination;
+
+    }
+  }
+
+  getDirections() async {
+
+    Map _directions = {};
+
+    for (var lineDetail in lineDetails) {
+
+      String _url = 'https://api-ratp.pierre-grimaud.fr/v4/lines/${lineDetail['type']}/'
+          '${lineDetail['code']}';
+      Response _response = await get(Uri.parse(_url));
+      Map _data = const JsonDecoder().convert(_response.body);
+
+      try{
+        List<String> _dataList = _data['result']['directions'].toString().split(' / ');
+        _directions = {
+          'A' : _dataList[0].toString(),
+          'R' : _dataList[1].toString()
+        };
+      }
+
+      catch(e){
+        print(e);
+      }
+
+      print(_directions);
+      directions = _directions;
+      return _directions;
+
+    }
+
+  }
 
 }
-
-// class WeatherCard extends StatelessWidget {
-//   const WeatherCard({
-//     Key? key,
-//     required this.newSchedule,
-//   }) : super(key: key);
-//
-//   final ScheduleStream newSchedule;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Flexible(
-//       flex: 3,
-//       child: CustomCard(
-//         title: 'Station ${newSchedule.station}',
-//         child: Padding(
-//           padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
-//           child: StreamBuilder(
-//               stream: newSchedule.stream,
-//               builder: (context, data){
-//                 if(data.connectionState == ConnectionState.active){
-//                   List newStreamList = [];
-//                   newStreamList = data.data as List;
-//                   return ListView.builder(
-//                       shrinkWrap: true,
-//                       scrollDirection: Axis.vertical,
-//                       itemCount:newStreamList[0].length,
-//                       itemBuilder: (context, index){
-//                         return ListTile(
-//                           leading: SvgPicture.asset('assets/m${newSchedule.code}.svg', width: 40.0, height: 40.0,),
-//                           title: Text(newStreamList[1][index].toString(), style: MyTextStyle().large,),
-//                           trailing: Text(newStreamList[0][index].toString(), style: MyTextStyle().large),
-//                         );
-//                       });
-//                 }
-//                 else{
-//                   return Center(child: CircularProgressIndicator(color: MyColors().darkColor1,));
-//                 }
-//               }),
-//         ),),
-//     );
-//   }
-// }
