@@ -18,7 +18,7 @@ class _SettingsState extends State<Settings> {
   Map _newLoc = {};
   dynamic iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
   List<int> lineNumber = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
-  int dropdownValue = 1;
+  int? dropdownValue;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class _SettingsState extends State<Settings> {
                     const SizedBox(height: 20.0,),
                     SizedBox(
                       height: 55.0,
-                      width: 170.0,
+                      width: 190.0,
                       child: DropdownButtonFormField(
                         isDense: true,
                         decoration: InputDecoration(
@@ -77,6 +77,7 @@ class _SettingsState extends State<Settings> {
                         },
                       ),
                     ),
+                    dropdownValue == null ? Container(width: 0.0,) :
                     FloatingActionButton(onPressed: () async {
                       Schedule _newSchedule = Schedule(lineDetails: [{
                         'type' : 'metros',

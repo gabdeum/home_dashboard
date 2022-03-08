@@ -118,6 +118,7 @@ class CustomWeatherCard extends StatelessWidget {
           future: newWeather.getCurrentWeather(),
           builder: (context, data){
             if (data.connectionState == ConnectionState.done && data.data != null){
+              print(data.data);
               Map weather = data.data as Map;
               return Row(
                 children: [

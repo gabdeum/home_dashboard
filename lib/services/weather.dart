@@ -54,8 +54,8 @@ class FutureWeather {
         Map _dailyWeather = {
           'day' : _day,
           'icon' : 'assets/${weatherIcons['${_dailyData[i]['weather'][0]['icon']}']}',
-          'min' : (_dailyData[i]['temp']['min'] as double).round().toString(),
-          'max' : (_dailyData[i]['temp']['max'] as double).round().toString()
+          'min' : (_dailyData[i]['temp']['min'] as num).round().toString(),
+          'max' : (_dailyData[i]['temp']['max'] as num).round().toString()
         };
 
         _daily.add(_dailyWeather);
@@ -70,24 +70,23 @@ class FutureWeather {
       weather = {
         'main' : convertToTitleCase(_data['current']['weather'][0]['main'].toString()),
         'description' : convertToTitleCase(_data['current']['weather'][0]['description'].toString()),
-        'currentTemp' : (_data['current']['temp'] as double).round().toString(),
-        'min' : (_data['daily'][0]['temp']['min'] as double).round().toString(),
-        'max' : (_data['daily'][0]['temp']['max'] as double).round().toString(),
+        'currentTemp' : (_data['current']['temp'] as num).round().toString(),
+        'min' : (_data['daily'][0]['temp']['min'] as num).round().toString(),
+        'max' : (_data['daily'][0]['temp']['max'] as num).round().toString(),
         'icon' : 'assets/${weatherIcons['${_data['current']['weather'][0]['icon']}']}',
         'sunrise' : _sunrise,
         'sunset' : _sunset,
         'daily' : _daily,
       };
+
+      return weather;
+
     }
 
     catch (e){
       print(e);
     }
-
-    return weather;
-
   }
-
 }
 
 
