@@ -77,11 +77,10 @@ class _SettingsState extends State<Settings> {
                           );
                         }).toList(),
                         onChanged: (int? _newValue) async {
-                          if(stationSelection != null || stations.isNotEmpty || directions.isNotEmpty){
+                          if(stationSelection != null || stations.isNotEmpty){
                             setState(() {
                               stationSelection = null;
                               stations = [];
-                              directions = {};
                             });
                           }
                           Schedule _newSchedule = Schedule(lineDetails: [{
@@ -100,7 +99,7 @@ class _SettingsState extends State<Settings> {
                     (lineNumberSelection == null) ? Container(width: 0.0,) :
                     SizedBox(
                       height: 55.0,
-                      width: 400.0,
+                      width: 370.0,
                       child: DropdownButtonFormField(
                         isDense: true,
                         decoration: InputDecoration(
@@ -114,13 +113,13 @@ class _SettingsState extends State<Settings> {
                           ),
                           labelText: 'Station',
                           labelStyle: MyTextStyle().mediumDark,
-                          prefixIcon: Icon(Icons.directions_subway, color: MyColors().darkColor1,),
+                          prefixIcon: Icon(Icons.directions, color: MyColors().darkColor1,),
                         ),
                         value: stationSelection,
                         items: stations.map<DropdownMenuItem<Map>>((value) {
                           return DropdownMenuItem<Map>(
                             value: value,
-                            child: Text('${value['name']}'),
+                            child: Text(_truncateWithEllipsis(28, value['name'])),
                           );
                         }).toList(),
                         onChanged: (Map? _newValue) async {
@@ -136,6 +135,7 @@ class _SettingsState extends State<Settings> {
                       children: [
                         Expanded(
                           child: CheckboxListTile(
+                              activeColor: MyColors().color1,
                               title: Text(directions['A'] ??= ''),
                               controlAffinity: ListTileControlAffinity.leading,
                               value: directionA,
@@ -148,6 +148,7 @@ class _SettingsState extends State<Settings> {
                         ),
                         Expanded(
                           child: CheckboxListTile(
+                              activeColor: MyColors().color1,
                               title: Text(directions['R'] ??= ''),
                               controlAffinity: ListTileControlAffinity.leading,
                               value: directionR,
@@ -159,7 +160,14 @@ class _SettingsState extends State<Settings> {
                           ),
                         ),
                       ],
-                    )
+                    ),
+                    const SizedBox(height: 10.0,),
+                    Center(child: FloatingActionButton(
+                      elevation: 0.0,
+                      onPressed: (){},
+                      child: const Icon(Icons.add),
+                      backgroundColor: MyColors().color1,
+                    ))
                   ],
                 ),
               ),
@@ -245,7 +253,15 @@ class _SettingsState extends State<Settings> {
   }
 }
 
-/// Determine the current position of the device.
+
+/// Add '...' if String length >= value
+String _truncateWithEllipsis(int cutoff, String myString) {
+
+  return myString.length >= cutoff ? myString.replaceRange(cutoff, myString.length, '...') : myString;
+
+}
+
+  /// Determine the current position of the device.
 ///
 /// When the location services are not enabled or permissions
 /// are denied the `Future` will return an error.
