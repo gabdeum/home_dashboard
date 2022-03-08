@@ -18,7 +18,13 @@ class _SettingsState extends State<Settings> {
   Map _newLoc = {};
   dynamic iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
   List<int> lineNumber = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
-  int? dropdownValue;
+  int? lineNumberSelection;
+  Map? stationSelection;
+  bool directionA = false;
+  bool directionR = false;
+
+  List stations = [];
+  Map directions = {};
 
   @override
   Widget build(BuildContext context) {
@@ -63,29 +69,97 @@ class _SettingsState extends State<Settings> {
                           labelStyle: MyTextStyle().mediumDark,
                           prefixIcon: Icon(Icons.directions_subway, color: MyColors().darkColor1,),
                         ),
-                        value: dropdownValue,
+                        value: lineNumberSelection,
                         items: lineNumber.map<DropdownMenuItem<int>>((value) {
                           return DropdownMenuItem<int>(
                             value: value,
                             child: Text('Line $value'),
                           );
                         }).toList(),
-                        onChanged: (int? newValue) {
+                        onChanged: (int? _newValue) async {
+                          if(stationSelection != null || stations.isNotEmpty || directions.isNotEmpty){
+                            setState(() {
+                              stationSelection = null;
+                              stations = [];
+                              directions = {};
+                            });
+                          }
+                          Schedule _newSchedule = Schedule(lineDetails: [{
+                            'type' : 'metros',
+                            'code' : '$_newValue'
+                          }]);
+                          stations = await _newSchedule.getStations() as List;
+                          directions = await _newSchedule.getDirections() as Map;
                           setState(() {
-                            dropdownValue = newValue!;
+                            lineNumberSelection = _newValue!;
                           });
                         },
                       ),
                     ),
-                    dropdownValue == null ? Container(width: 0.0,) :
-                    FloatingActionButton(heroTag: 'hero1', onPressed: () async {
-                      Schedule _newSchedule = Schedule(lineDetails: [{
-                        'type' : 'metros',
-                        'code' : '13'
-                      }]);
-                      await _newSchedule.getStations();
-                      await _newSchedule.getDirections();
-                    })
+                    const SizedBox(height: 20.0,),
+                    (lineNumberSelection == null) ? Container(width: 0.0,) :
+                    SizedBox(
+                      height: 55.0,
+                      width: 400.0,
+                      child: DropdownButtonFormField(
+                        isDense: true,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(40.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(40.0),
+                              borderSide: BorderSide(color: MyColors().darkColor1, width: 2.0)
+                          ),
+                          labelText: 'Station',
+                          labelStyle: MyTextStyle().mediumDark,
+                          prefixIcon: Icon(Icons.directions_subway, color: MyColors().darkColor1,),
+                        ),
+                        value: stationSelection,
+                        items: stations.map<DropdownMenuItem<Map>>((value) {
+                          return DropdownMenuItem<Map>(
+                            value: value,
+                            child: Text('${value['name']}'),
+                          );
+                        }).toList(),
+                        onChanged: (Map? _newValue) async {
+                          setState(() {
+                            stationSelection = _newValue!;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10.0,),
+                    (lineNumberSelection == null) ? Container(width: 0.0,) :
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CheckboxListTile(
+                              title: Text(directions['A'] ??= ''),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              value: directionA,
+                              onChanged: (bool? value){
+                                setState(() {
+                                  directionA = value!;
+                                });
+                              }
+                          ),
+                        ),
+                        Expanded(
+                          child: CheckboxListTile(
+                              title: Text(directions['R'] ??= ''),
+                              controlAffinity: ListTileControlAffinity.leading,
+                              value: directionR,
+                              onChanged: (bool? value){
+                                setState(() {
+                                  directionR = value!;
+                                });
+                              }
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

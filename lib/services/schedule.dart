@@ -98,7 +98,6 @@ class Schedule {
         print(e);
       }
 
-      print(_destination);
       stations = _destination;
       return _destination;
 
@@ -128,7 +127,6 @@ class Schedule {
         print(e);
       }
 
-      print(_directions);
       directions = _directions;
       return _directions;
 
