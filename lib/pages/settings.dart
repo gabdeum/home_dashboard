@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_dashboard/services/customCards.dart';
 import 'package:home_dashboard/services/geoLocator.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,20 +15,16 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
 
-  final addressController = TextEditingController();
+  final _addressController = TextEditingController();
   Map _newLoc = {};
-  dynamic iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
-  List<int> lineNumber = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
-  int? lineNumberSelection;
-  Map? stationSelection;
-  bool directionA = false;
-  bool directionR = false;
+  dynamic _iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
 
-  List stations = [];
-  Map directions = {};
+  List scheduleSettingCards = [CustomScheduleSettingCard()];
 
   @override
   Widget build(BuildContext context) {
+
+    print(scheduleSettingCards);
 
     return Scaffold(
       // resizeToAvoidBottomInset: false,
@@ -51,120 +48,22 @@ class _SettingsState extends State<Settings> {
                   children: [
                     Text('Transport schedules', style: MyTextStyle().largeDark,),
                     const SizedBox(height: 20.0,),
-                    SizedBox(
-                      height: 55.0,
-                      width: 190.0,
-                      child: DropdownButtonFormField(
-                        isDense: true,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(40.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(40.0),
-                              borderSide: BorderSide(color: MyColors().darkColor1, width: 2.0)
-                          ),
-                          labelText: 'Subway line',
-                          labelStyle: MyTextStyle().mediumDark,
-                          prefixIcon: Icon(Icons.directions_subway, color: MyColors().darkColor1,),
-                        ),
-                        value: lineNumberSelection,
-                        items: lineNumber.map<DropdownMenuItem<int>>((value) {
-                          return DropdownMenuItem<int>(
-                            value: value,
-                            child: Text('Line $value'),
-                          );
-                        }).toList(),
-                        onChanged: (int? _newValue) async {
-                          if(stationSelection != null || stations.isNotEmpty){
-                            setState(() {
-                              stationSelection = null;
-                              stations = [];
-                            });
-                          }
-                          Schedule _newSchedule = Schedule(lineDetails: [{
-                            'type' : 'metros',
-                            'code' : '$_newValue'
-                          }]);
-                          stations = await _newSchedule.getStations() as List;
-                          directions = await _newSchedule.getDirections() as Map;
-                          setState(() {
-                            lineNumberSelection = _newValue!;
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 20.0,),
-                    (lineNumberSelection == null) ? Container(width: 0.0,) :
-                    SizedBox(
-                      height: 55.0,
-                      width: 370.0,
-                      child: DropdownButtonFormField(
-                        isDense: true,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(40.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(40.0),
-                              borderSide: BorderSide(color: MyColors().darkColor1, width: 2.0)
-                          ),
-                          labelText: 'Station',
-                          labelStyle: MyTextStyle().mediumDark,
-                          prefixIcon: Icon(Icons.directions, color: MyColors().darkColor1,),
-                        ),
-                        value: stationSelection,
-                        items: stations.map<DropdownMenuItem<Map>>((value) {
-                          return DropdownMenuItem<Map>(
-                            value: value,
-                            child: Text(_truncateWithEllipsis(28, value['name'])),
-                          );
-                        }).toList(),
-                        onChanged: (Map? _newValue) async {
-                          setState(() {
-                            stationSelection = _newValue!;
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 10.0,),
-                    (lineNumberSelection == null) ? Container(width: 0.0,) :
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CheckboxListTile(
-                              activeColor: MyColors().color1,
-                              title: Text(directions['A'] ??= ''),
-                              controlAffinity: ListTileControlAffinity.leading,
-                              value: directionA,
-                              onChanged: (bool? value){
-                                setState(() {
-                                  directionA = value!;
-                                });
-                              }
-                          ),
-                        ),
-                        Expanded(
-                          child: CheckboxListTile(
-                              activeColor: MyColors().color1,
-                              title: Text(directions['R'] ??= ''),
-                              controlAffinity: ListTileControlAffinity.leading,
-                              value: directionR,
-                              onChanged: (bool? value){
-                                setState(() {
-                                  directionR = value!;
-                                });
-                              }
-                          ),
-                        ),
-                      ],
+                    ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: scheduleSettingCards.length,
+                      itemBuilder: (context, index){
+                        return scheduleSettingCards[index];
+                      },
                     ),
                     const SizedBox(height: 10.0,),
                     Center(child: FloatingActionButton(
                       elevation: 0.0,
-                      onPressed: (){},
+                      onPressed: (){
+                        setState(() {
+                          scheduleSettingCards.add(CustomScheduleSettingCard());
+                        });
+                      },
                       child: const Icon(Icons.add),
                       backgroundColor: MyColors().color1,
                     ))
@@ -183,7 +82,7 @@ class _SettingsState extends State<Settings> {
                       children: [
                         Expanded(
                           child: TextField(
-                            controller: addressController,
+                            controller: _addressController,
                             decoration: InputDecoration(
                                 isDense: true,
                                 border: OutlineInputBorder(
@@ -201,7 +100,7 @@ class _SettingsState extends State<Settings> {
                                 suffixIcon: IconButton(
                                   icon: Icon(Icons.close, color: MyColors().darkColor1,),
                                   onPressed: () {
-                                    addressController.clear();
+                                    _addressController.clear();
                                     _newLoc = {};
                                     setState(() {});
                                   },
@@ -220,7 +119,7 @@ class _SettingsState extends State<Settings> {
                           heroTag: 'hero2',
                           onPressed: () async {
                             setState(() {
-                              iconSearchLocation = SizedBox(
+                              _iconSearchLocation = SizedBox(
                                 child: CircularProgressIndicator(color: MyColors().textColor, strokeWidth: 2.0,),
                                 width: 18.0,
                                 height: 18.0,
@@ -228,9 +127,9 @@ class _SettingsState extends State<Settings> {
                             });
                             Position newPosition = await _determinePosition();
                             _newLoc = await GeoLoc(latitude: newPosition.latitude, longitude: newPosition.longitude).getLocFromLatLong();
-                            setState(() {iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);});
+                            setState(() {_iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);});
                           },
-                          child: iconSearchLocation,
+                          child: _iconSearchLocation,
                           backgroundColor: MyColors().color1,
                           elevation: 0.0,
                         )
@@ -251,14 +150,6 @@ class _SettingsState extends State<Settings> {
       ),
     );
   }
-}
-
-
-/// Add '...' if String length >= value
-String _truncateWithEllipsis(int cutoff, String myString) {
-
-  return myString.length >= cutoff ? myString.replaceRange(cutoff, myString.length, '...') : myString;
-
 }
 
   /// Determine the current position of the device.

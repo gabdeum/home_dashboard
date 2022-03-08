@@ -238,6 +238,176 @@ class CustomClockCard extends StatelessWidget {
   }
 }
 
+//ignore: must_be_immutable
+class CustomScheduleSettingCard extends StatefulWidget {
+
+  Map scheduleData = {
+    'line' : null,
+    'station' : '',
+    'direction' : ''
+  };
+
+  CustomScheduleSettingCard({Key? key}) : super(key: key);
+
+  @override
+  _CustomScheduleSettingCardState createState() => _CustomScheduleSettingCardState();
+}
+
+class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
+
+  final List<int> _lineNumber = [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
+
+  int? _lineSelection;
+  Map? _stationSelection;
+  bool _directionA = false;
+  bool _directionR = false;
+
+  List _stations = [];
+  Map _directions = {};
+
+  @override
+  Widget build(BuildContext context) {
+
+    print(widget.scheduleData);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 55.0,
+          width: 190.0,
+          child: DropdownButtonFormField(
+            isDense: true,
+            decoration: InputDecoration(
+              isDense: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(40.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                  borderSide: BorderSide(color: MyColors().darkColor1, width: 2.0)
+              ),
+              labelText: 'Subway line',
+              labelStyle: MyTextStyle().mediumDark,
+              prefixIcon: Icon(Icons.directions_subway, color: MyColors().darkColor1,),
+            ),
+            value: _lineSelection,
+            items: _lineNumber.map<DropdownMenuItem<int>>((value) {
+              return DropdownMenuItem<int>(
+                value: value,
+                child: Text('Line $value'),
+              );
+            }).toList(),
+            onChanged: (int? _newValue) async {
+              if(_stationSelection != null || _stations.isNotEmpty){
+                setState(() {
+                  _stationSelection = null;
+                  _stations = [];
+                });
+              }
+              Schedule _newSchedule = Schedule(lineDetails: [{
+                'type' : 'metros',
+                'code' : '$_newValue'
+              }]);
+              _stations = await _newSchedule.getStations() as List;
+              _directions = await _newSchedule.getDirections() as Map;
+              setState(() {
+                _lineSelection = _newValue!;
+                _directionA = false;
+                _directionR = false;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 20.0,),
+        (_lineSelection == null) ? Container(width: 0.0,) :
+        SizedBox(
+          height: 55.0,
+          width: 370.0,
+          child: DropdownButtonFormField(
+            isDense: true,
+            decoration: InputDecoration(
+              isDense: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(40.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                  borderSide: BorderSide(color: MyColors().darkColor1, width: 2.0)
+              ),
+              labelText: 'Station',
+              labelStyle: MyTextStyle().mediumDark,
+              prefixIcon: Icon(Icons.directions, color: MyColors().darkColor1,),
+            ),
+            value: _stationSelection,
+            items: _stations.map<DropdownMenuItem<Map>>((value) {
+              return DropdownMenuItem<Map>(
+                value: value,
+                child: Text(_truncateWithEllipsis(28, value['name'])),
+              );
+            }).toList(),
+            onChanged: (Map? _newValue) async {
+              setState(() {
+                _stationSelection = _newValue!;
+                widget.scheduleData['line'] = _lineSelection;
+                widget.scheduleData['station'] = _stationSelection;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 10.0,),
+        (_lineSelection == null) ? Container(width: 0.0,) :
+        Row(
+          children: [
+            Expanded(
+              child: CheckboxListTile(
+                  activeColor: MyColors().color1,
+                  title: Text(_directions['A'] ??= ''),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: _directionA,
+                  onChanged: (bool? value){
+                    setState(() {
+                      _directionA = value!;
+                      if(_directionA && _directionR){widget.scheduleData['direction'] = 'A+R';}
+                      else if(_directionA && !_directionR){widget.scheduleData['direction'] = 'A';}
+                      else if(!_directionA && _directionR){widget.scheduleData['direction'] = 'R';}
+                      else {widget.scheduleData['direction'] = '';}
+                    });
+                  }
+              ),
+            ),
+            Expanded(
+              child: CheckboxListTile(
+                  activeColor: MyColors().color1,
+                  title: Text(_directions['R'] ??= ''),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: _directionR,
+                  onChanged: (bool? value){
+                    setState(() {
+                      _directionR = value!;
+                      if(_directionA && _directionR){widget.scheduleData['direction'] = 'A+R';}
+                      else if(_directionA && !_directionR){widget.scheduleData['direction'] = 'A';}
+                      else if(!_directionA && _directionR){widget.scheduleData['direction'] = 'R';}
+                      else {widget.scheduleData['direction'] = '';}
+                    });
+                  }
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Add '...' if String length >= value
+String _truncateWithEllipsis(int cutoff, String myString) {
+
+  return myString.length >= cutoff ? myString.replaceRange(cutoff, myString.length, '...') : myString;
+
+}
+
 Route createRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => const Settings(),
