@@ -40,6 +40,7 @@ class CustomCard extends StatelessWidget {
                     right: 0,
                     top: 0,
                     child: FloatingActionButton(
+                      heroTag: 'hero0',
                       mini: true,
                       onPressed: (){
                         Navigator.of(context).push(createRoute());
@@ -118,7 +119,6 @@ class CustomWeatherCard extends StatelessWidget {
           future: newWeather.getCurrentWeather(),
           builder: (context, data){
             if (data.connectionState == ConnectionState.done && data.data != null){
-              print(data.data);
               Map weather = data.data as Map;
               return Row(
                 children: [

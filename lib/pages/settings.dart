@@ -78,7 +78,7 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     dropdownValue == null ? Container(width: 0.0,) :
-                    FloatingActionButton(onPressed: () async {
+                    FloatingActionButton(heroTag: 'hero1', onPressed: () async {
                       Schedule _newSchedule = Schedule(lineDetails: [{
                         'type' : 'metros',
                         'code' : '13'
@@ -135,6 +135,7 @@ class _SettingsState extends State<Settings> {
                         ),
                         const SizedBox(width: 10.0,),
                         FloatingActionButton(
+                          heroTag: 'hero2',
                           onPressed: () async {
                             setState(() {
                               iconSearchLocation = SizedBox(
