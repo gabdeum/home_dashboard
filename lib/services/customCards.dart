@@ -268,12 +268,11 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
   @override
   Widget build(BuildContext context) {
 
-    print(widget.scheduleData);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        const SizedBox(height: 20.0,),
         SizedBox(
           height: 55.0,
           width: 190.0,
@@ -321,7 +320,7 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
           ),
         ),
         const SizedBox(height: 20.0,),
-        (_lineSelection == null) ? Container(width: 0.0,) :
+        (_lineSelection == null) ? Container(height: 0.0,) :
         SizedBox(
           height: 55.0,
           width: 370.0,
@@ -357,7 +356,7 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
           ),
         ),
         const SizedBox(height: 10.0,),
-        (_lineSelection == null) ? Container(width: 0.0,) :
+        (_lineSelection == null) ? Container(height: 0.0,) :
         Row(
           children: [
             Expanded(

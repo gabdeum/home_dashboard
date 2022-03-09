@@ -19,12 +19,12 @@ class _SettingsState extends State<Settings> {
   Map _newLoc = {};
   dynamic _iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
 
-  List scheduleSettingCards = [CustomScheduleSettingCard()];
+  List<CustomScheduleSettingCard> scheduleSettingCards = [CustomScheduleSettingCard()];
 
   @override
   Widget build(BuildContext context) {
 
-    print(scheduleSettingCards);
+    for (var element in scheduleSettingCards) {print(element.scheduleData);}
 
     return Scaffold(
       // resizeToAvoidBottomInset: false,
@@ -34,44 +34,55 @@ class _SettingsState extends State<Settings> {
         centerTitle: true,
         backgroundColor: MyColors().color1,
       ),
-      body: SingleChildScrollView(
-        physics: const  ClampingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text('Transport schedules', style: MyTextStyle().largeDark,),
-                    const SizedBox(height: 20.0,),
-                    ListView.builder(
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('Transport schedules', style: MyTextStyle().largeDark,),
+                  Expanded(
+                    child: ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemCount: scheduleSettingCards.length,
                       itemBuilder: (context, index){
-                        return scheduleSettingCards[index];
+                        return Stack(
+                          children: [
+                            index == 0 ? Container(height: 0.0,) :
+                            Positioned(top: 1.0, right: 1.0, child: TextButton(
+                                onPressed: (){setState(() {scheduleSettingCards.removeAt(index);});},
+                                child: Icon(Icons.clear, color: MyColors().color1,))
+                            ),
+                            scheduleSettingCards[index],
+                          ],
+                        );
                       },
                     ),
-                    const SizedBox(height: 10.0,),
-                    Center(child: FloatingActionButton(
-                      elevation: 0.0,
-                      onPressed: (){
-                        setState(() {
-                          scheduleSettingCards.add(CustomScheduleSettingCard());
-                        });
-                      },
-                      child: const Icon(Icons.add),
-                      backgroundColor: MyColors().color1,
-                    ))
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 10.0,),
+                  Center(child: FloatingActionButton(
+                    elevation: 0.0,
+                    onPressed: (){
+                      setState(() {
+                        scheduleSettingCards.add(CustomScheduleSettingCard());
+                      });
+                    },
+                    child: const Icon(Icons.add),
+                    backgroundColor: MyColors().color1,
+                  )),
+                ],
               ),
-              const SizedBox(width: 30.0,),
-              Expanded(
+            ),
+            const SizedBox(width: 30.0,),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const  ClampingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -144,8 +155,8 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
