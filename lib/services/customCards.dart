@@ -43,7 +43,7 @@ class CustomCard extends StatelessWidget {
                       heroTag: 'hero0',
                       mini: true,
                       onPressed: (){
-                        Navigator.of(context).push(createRoute());
+                        Navigator.of(context).push(createRoute()).then((value) => print(value));
                       },
                       child: const Icon(Icons.settings,),
                       backgroundColor: MyColors().darkColor1,
