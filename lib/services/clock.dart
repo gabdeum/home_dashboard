@@ -13,16 +13,14 @@ class Clock extends StatefulWidget {
 class _ClockState extends State<Clock> {
 
   MinuteHourTwoDigits? nowFormated;
+  Timer? _timer;
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
-
     final DateTime _now = DateTime.now();
     nowFormated = MinuteHourTwoDigits(_now);
 
-    Timer.periodic(const Duration(seconds: 5), (t) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (t) {
       final DateTime _now = DateTime.now();
       if (nowFormated?.minute != MinuteHourTwoDigits(_now).minute){
         setState(() {
@@ -30,6 +28,13 @@ class _ClockState extends State<Clock> {
         });
       }
     });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override

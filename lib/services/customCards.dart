@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:home_dashboard/pages/settings.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:home_dashboard/services/schedule.dart';
@@ -10,8 +9,8 @@ class CustomCard extends StatelessWidget {
 
   final Widget child;
   final String title;
-  final bool hasSettingButton;
-  const CustomCard({required this.child, required this.title, this.hasSettingButton = false, Key? key}) : super(key: key);
+
+  const CustomCard({required this.child, required this.title, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +35,6 @@ class CustomCard extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                     child: Text(title, style: MyTextStyle().title),
                   ),
-                  hasSettingButton ? Positioned(
-                    right: 0,
-                    top: 0,
-                    child: FloatingActionButton(
-                      heroTag: 'hero0',
-                      mini: true,
-                      onPressed: (){
-                        Navigator.of(context).push(createRoute()).then((value) => print(value));
-                      },
-                      child: const Icon(Icons.settings,),
-                      backgroundColor: MyColors().darkColor1,
-                        ),
-                  ) : Container(width: 0,)
                 ],
               ),
               Expanded(
@@ -62,43 +48,59 @@ class CustomCard extends StatelessWidget {
   }
 }
 
-class CustomScheduleCard extends StatelessWidget {
+class CustomScheduleCard extends StatefulWidget {
 
   final Schedule newSchedule;
   const CustomScheduleCard({Key? key, required this.newSchedule}) : super(key: key);
 
   @override
+  State<CustomScheduleCard> createState() => _CustomScheduleCardState();
+}
+
+class _CustomScheduleCardState extends State<CustomScheduleCard> {
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    widget.newSchedule.timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    widget.newSchedule.timer?.cancel();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Flexible(
-      flex: 3,
-      child: CustomCard(
-        hasSettingButton: true,
-        title: 'Schedules',
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
-          child: StreamBuilder(
-              stream: newSchedule.getScheduleStream(),
-              builder: (context, data){
-                if(data.connectionState == ConnectionState.active){
-                  List newStreamList = data.data as List;
-                  return ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount:newStreamList[0].length,
-                      itemBuilder: (context, index){
-                        return ListTile(
-                          leading: SvgPicture.asset('assets/m13.svg', width: 40.0, height: 40.0,),
-                          title: Text(newStreamList[1][index].toString(), style: MyTextStyle().large,),
-                          trailing: Text(newStreamList[0][index].toString(), style: MyTextStyle().large),
-                        );
-                      });
-                }
-                else{
-                  return Center(child: CircularProgressIndicator(color: MyColors().darkColor1,));
-                }
-              }),
-        ),),
-    );
+    return CustomCard(
+      title: 'Schedules',
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
+        child: StreamBuilder(
+            stream: widget.newSchedule.getScheduleStream(),
+            builder: (context, data){
+              if(data.connectionState == ConnectionState.active){
+                List newStreamList = data.data as List;
+                return ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount:newStreamList[0].length,
+                    itemBuilder: (context, index){
+                      return ListTile(
+                        leading: SvgPicture.asset('assets/m13.svg', width: 40.0, height: 40.0,),
+                        title: Text(newStreamList[1][index].toString(), style: MyTextStyle().large,),
+                        trailing: Text(newStreamList[0][index].toString(), style: MyTextStyle().large),
+                      );
+                    });
+              }
+              else{
+                return Center(child: CircularProgressIndicator(color: MyColors().darkColor1,));
+              }
+            }),
+      ),);
   }
 }
 
@@ -242,9 +244,11 @@ class CustomClockCard extends StatelessWidget {
 class CustomScheduleSettingCard extends StatefulWidget {
 
   Map scheduleData = {
-    'line' : null,
+    'type' : 'metros',
+    'code' : '',
     'station' : '',
-    'direction' : ''
+    'stationCode' : '',
+    'way' : ''
   };
 
   CustomScheduleSettingCard({Key? key}) : super(key: key);
@@ -349,8 +353,9 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
             onChanged: (Map? _newValue) async {
               setState(() {
                 _stationSelection = _newValue!;
-                widget.scheduleData['line'] = _lineSelection;
-                widget.scheduleData['station'] = _stationSelection;
+                widget.scheduleData['code'] = _lineSelection;
+                widget.scheduleData['station'] = _stationSelection?['name'];
+                widget.scheduleData['stationCode'] = _stationSelection?['slug'];
               });
             },
           ),
@@ -368,10 +373,10 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
                   onChanged: (bool? value){
                     setState(() {
                       _directionA = value!;
-                      if(_directionA && _directionR){widget.scheduleData['direction'] = 'A+R';}
-                      else if(_directionA && !_directionR){widget.scheduleData['direction'] = 'A';}
-                      else if(!_directionA && _directionR){widget.scheduleData['direction'] = 'R';}
-                      else {widget.scheduleData['direction'] = '';}
+                      if(_directionA && _directionR){widget.scheduleData['way'] = 'A+R';}
+                      else if(_directionA && !_directionR){widget.scheduleData['way'] = 'A';}
+                      else if(!_directionA && _directionR){widget.scheduleData['way'] = 'R';}
+                      else {widget.scheduleData['way'] = '';}
                     });
                   }
               ),
@@ -385,10 +390,10 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
                   onChanged: (bool? value){
                     setState(() {
                       _directionR = value!;
-                      if(_directionA && _directionR){widget.scheduleData['direction'] = 'A+R';}
-                      else if(_directionA && !_directionR){widget.scheduleData['direction'] = 'A';}
-                      else if(!_directionA && _directionR){widget.scheduleData['direction'] = 'R';}
-                      else {widget.scheduleData['direction'] = '';}
+                      if(_directionA && _directionR){widget.scheduleData['way'] = 'A+R';}
+                      else if(_directionA && !_directionR){widget.scheduleData['way'] = 'A';}
+                      else if(!_directionA && _directionR){widget.scheduleData['way'] = 'R';}
+                      else {widget.scheduleData['way'] = '';}
                     });
                   }
               ),
@@ -405,22 +410,4 @@ String _truncateWithEllipsis(int cutoff, String myString) {
 
   return myString.length >= cutoff ? myString.replaceRange(cutoff, myString.length, '...') : myString;
 
-}
-
-Route createRoute() {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => const Settings(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(1.0, 0.0);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  );
 }
