@@ -122,16 +122,16 @@ class CustomWeatherCard extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(child: SvgPicture.asset(weather['icon'])),
-                            Text(weather['main'], textAlign: TextAlign.center, style: MyTextStyle().large),
+                            Expanded(child: SvgPicture.asset(weather['icon'].toString())),
+                            Text(weather['main'].toString(), textAlign: TextAlign.center, style: MyTextStyle().large),
                             const SizedBox(height: 10.0,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('${weather['currentTemp']}°', textAlign: TextAlign.center, style: MyTextStyle().large),
+                                Text('${weather['currentTemp'].toString()}°', textAlign: TextAlign.center, style: MyTextStyle().large),
                                 const SizedBox(width: 10,),
-                                Text('${weather['min']}°\n${weather['max']}°', textAlign: TextAlign.center, style: MyTextStyle().small)
+                                Text('${weather['min'].toString()}°\n${weather['max'].toString()}°', textAlign: TextAlign.center, style: MyTextStyle().small)
                               ],
                             )
                           ],
@@ -143,17 +143,17 @@ class CustomWeatherCard extends StatelessWidget {
                     child: ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
-                      itemCount: (weather['daily'] as List).length,
+                      itemCount: weather['daily'] != null ? (weather['daily'] as List).length : 0,
                       itemBuilder: (context, index){
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 3),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              SizedBox(width: 83.0, child: Text(weather['daily'][index]['day'], style: MyTextStyle().small)),
-                              Flexible(child: SvgPicture.asset(weather['daily'][index]['icon'], width: 30,), fit: FlexFit.tight),
-                              SizedBox(width: 25.0, child: Text('${weather['daily'][index]['min']}°', textAlign: TextAlign.end, style: MyTextStyle().small)),
-                              SizedBox(width: 35.0, child: Text('${weather['daily'][index]['max']}°', textAlign: TextAlign.end, style: MyTextStyle().small)),
+                              SizedBox(width: 83.0, child: Text(weather['daily'][index]['day'].toString(), style: MyTextStyle().small)),
+                              Flexible(child: SvgPicture.asset(weather['daily'][index]['icon'].toString(), width: 30,), fit: FlexFit.tight),
+                              SizedBox(width: 25.0, child: Text('${weather['daily'][index]['min'].toString()}°', textAlign: TextAlign.end, style: MyTextStyle().small)),
+                              SizedBox(width: 35.0, child: Text('${weather['daily'][index]['max'].toString()}°', textAlign: TextAlign.end, style: MyTextStyle().small)),
                             ],
                           ),
                         );

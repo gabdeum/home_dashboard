@@ -26,7 +26,7 @@ class _SettingsState extends State<Settings> {
 
     return WillPopScope(
       onWillPop: () async {
-        List _lineDetails = [];
+        List<Map<dynamic, dynamic>> _lineDetails = [];
         for (var element in scheduleSettingCards) {
           _lineDetails.add(element.lineDetail);
         }
@@ -35,7 +35,7 @@ class _SettingsState extends State<Settings> {
           'lon' : _newLoc['lon'],
           'schedules' : _lineDetails
         };
-
+        print(_settingsData);
         Navigator.pop(context, _settingsData);
         return true;
       },

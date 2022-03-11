@@ -29,15 +29,15 @@ class Schedule {
 
       for (var lineDetail in lineDetails) {
 
-        String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
-            '${lineDetail['code']}/${lineDetail['stationCode']}/${lineDetail['way']}';
-        Response _response = await get(Uri.parse(_url));
-        Map _data = const JsonDecoder().convert(_response.body);
-
-        int retryCount = 0;
         bool hasSucceed = false;
 
+        int retryCount = 0;
         while (retryCount < 15 && !hasSucceed){
+
+          String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
+              '${lineDetail['code']}/${lineDetail['stationCode']}/${lineDetail['way']}';
+          Response _response = await get(Uri.parse(_url));
+          Map _data = const JsonDecoder().convert(_response.body);
 
           try{
             List _dataList = List.castFrom(_data['result']['schedules']);
@@ -62,13 +62,20 @@ class Schedule {
           }
 
           catch (e){
+
+            if(_data['result']['code'] == 500){
+              hasSucceed = false;
+            }
+            else{
+              hasSucceed = true;
+            }
+
             _destination = ['No data found'];
             _schedules = ['-'];
             print('Request URL: $_url\nResponse body: $_data\nERROR: $e');
           }
 
-          print('retryCount: $retryCount');
-          sleep(const Duration(seconds: 1));
+          sleep(const Duration(seconds: 5));
           retryCount++;
 
         }

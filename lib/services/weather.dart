@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 
 class FutureWeather {
 
-  double lat;
-  double lon;
+  double? lat;
+  double? lon;
   int gmt;
 
-  FutureWeather({required this.lat, required this.lon, this.gmt = 0});
+  FutureWeather({this.lat, this.lon, this.gmt = 0});
 
   String apiKey = '38f6f9718ff7894f7302be8b33cd3a22';
   Map weatherIcons = {
@@ -85,6 +85,7 @@ class FutureWeather {
 
     catch (e){
       print(e);
+      return weather;
     }
   }
 }
