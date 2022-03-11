@@ -12,6 +12,7 @@ class Schedule {
   final List<Map> lineDetails;
   List<Map> stations = [];
   Map directions = {};
+  Timer? timer;
 
   // final String url;
   Schedule({required this.lineDetails});
@@ -22,7 +23,6 @@ class Schedule {
 
     getSchedule() async {
 
-      List<Map> _schedule = [];
       List _destination = []; //Direction name
       List _schedules = []; //When are the next schedules
 
@@ -55,7 +55,7 @@ class Schedule {
         catch (e){
           _destination = ['No data found'];
           _schedules = ['-'];
-          print(e);
+          print('Request URL: $_url\nResponse body: $_data\nERROR: $e');
         }
 
       }
@@ -63,7 +63,7 @@ class Schedule {
     }
 
     getSchedule();
-    Timer.periodic(const Duration(seconds: 30), (t) {
+    timer = Timer.periodic(const Duration(seconds: 30), (t) {
       getSchedule();
     });
 

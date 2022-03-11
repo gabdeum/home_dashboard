@@ -26,17 +26,17 @@ class _SettingsState extends State<Settings> {
 
     return WillPopScope(
       onWillPop: () async {
-        // List _scheduleData = [];
-        // for (var element in scheduleSettingCards) {
-        //   _scheduleData.add(element.scheduleData);
-        // }
-        // Map settingsData = {
-        //   'lat' : _newLoc['lat'],
-        //   'lon' : _newLoc['lon'],
-        //   'schedules' : _scheduleData
-        // };
-        //
-        // Navigator.pop(context, settingsData);
+        List _scheduleData = [];
+        for (var element in scheduleSettingCards) {
+          _scheduleData.add(element.scheduleData);
+        }
+        Map _settingsData = {
+          'lat' : _newLoc['lat'],
+          'lon' : _newLoc['lon'],
+          'schedules' : _scheduleData
+        };
+
+        Navigator.pop(context, _settingsData);
         return true;
       },
       child: Scaffold(
