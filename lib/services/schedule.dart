@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:http/http.dart';
 import 'dart:convert';
 
@@ -33,29 +34,43 @@ class Schedule {
         Response _response = await get(Uri.parse(_url));
         Map _data = const JsonDecoder().convert(_response.body);
 
-        try{
-          List _dataList = List.castFrom(_data['result']['schedules']);
+        int retryCount = 0;
+        bool hasSucceed = false;
 
-          for (var element in _dataList) {
-            _destination.add(element['destination'].toString());
+        while (retryCount < 15 && !hasSucceed){
 
-            String message = element['message'].toString().replaceFirst(' mn', '');
-            bool isInt = int.tryParse(message) != null;
+          try{
+            List _dataList = List.castFrom(_data['result']['schedules']);
 
-            if(isInt == true){
-              String intSchedule = int.tryParse(message) != 0 ? '${(int.tryParse(message)! - 1).toString()} min' : "Train a l'approche";
-              _schedules.add(intSchedule);
+            for (var element in _dataList) {
+              _destination.add(element['destination'].toString());
+
+              String message = element['message'].toString().replaceFirst(' mn', '');
+              bool isInt = int.tryParse(message) != null;
+
+              if(isInt == true){
+                String intSchedule = int.tryParse(message) != 0 ? '${(int.tryParse(message)! - 1).toString()} min' : "Train a l'approche";
+                _schedules.add(intSchedule);
+              }
+              else{
+                _schedules.add(message);
+              }
             }
-            else{
-              _schedules.add(message);
-            }
+
+            hasSucceed = true;
+
           }
-        }
 
-        catch (e){
-          _destination = ['No data found'];
-          _schedules = ['-'];
-          print('Request URL: $_url\nResponse body: $_data\nERROR: $e');
+          catch (e){
+            _destination = ['No data found'];
+            _schedules = ['-'];
+            print('Request URL: $_url\nResponse body: $_data\nERROR: $e');
+          }
+
+          print('retryCount: $retryCount');
+          sleep(const Duration(seconds: 1));
+          retryCount++;
+
         }
 
       }

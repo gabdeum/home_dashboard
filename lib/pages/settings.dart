@@ -26,14 +26,14 @@ class _SettingsState extends State<Settings> {
 
     return WillPopScope(
       onWillPop: () async {
-        List _scheduleData = [];
+        List _lineDetails = [];
         for (var element in scheduleSettingCards) {
-          _scheduleData.add(element.scheduleData);
+          _lineDetails.add(element.lineDetail);
         }
         Map _settingsData = {
           'lat' : _newLoc['lat'],
           'lon' : _newLoc['lon'],
-          'schedules' : _scheduleData
+          'schedules' : _lineDetails
         };
 
         Navigator.pop(context, _settingsData);

@@ -48,10 +48,22 @@ class CustomCard extends StatelessWidget {
   }
 }
 
-class CustomScheduleCard extends StatelessWidget {
+class CustomScheduleCard extends StatefulWidget {
 
   final Schedule newSchedule;
   const CustomScheduleCard({Key? key, required this.newSchedule}) : super(key: key);
+
+  @override
+  State<CustomScheduleCard> createState() => _CustomScheduleCardState();
+}
+
+class _CustomScheduleCardState extends State<CustomScheduleCard> {
+
+  @override
+  void dispose() {
+    widget.newSchedule.timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +72,7 @@ class CustomScheduleCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
         child: StreamBuilder(
-            stream: newSchedule.getScheduleStream(),
+            stream: widget.newSchedule.getScheduleStream(),
             builder: (context, data){
               if(data.connectionState == ConnectionState.active){
                 List newStreamList = data.data as List;
@@ -223,10 +235,17 @@ class CustomClockCard extends StatelessWidget {
 //ignore: must_be_immutable
 class CustomScheduleSettingCard extends StatefulWidget {
 
-  Map scheduleData = {
-    'line' : null,
+  //Map with:
+  //    type (metros, rers, tramways, buses or noctiliens)
+  //    code (e.g. 8)
+  //    station (e.g. Guy Moquet)
+  //    way (Available values: A, R, A+R)
+  Map lineDetail = {
+    'type' : 'metros',
+    'code' : '',
     'station' : '',
-    'direction' : ''
+    'stationCode' : '',
+    'way' : ''
   };
 
   CustomScheduleSettingCard({Key? key}) : super(key: key);
@@ -331,8 +350,9 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
             onChanged: (Map? _newValue) async {
               setState(() {
                 _stationSelection = _newValue!;
-                widget.scheduleData['line'] = _lineSelection;
-                widget.scheduleData['station'] = _stationSelection;
+                widget.lineDetail['code'] = _lineSelection.toString();
+                widget.lineDetail['station'] = _stationSelection?['name'].toString();
+                widget.lineDetail['stationCode'] = _stationSelection?['slug'].toString();
               });
             },
           ),
@@ -350,10 +370,10 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
                   onChanged: (bool? value){
                     setState(() {
                       _directionA = value!;
-                      if(_directionA && _directionR){widget.scheduleData['direction'] = 'A+R';}
-                      else if(_directionA && !_directionR){widget.scheduleData['direction'] = 'A';}
-                      else if(!_directionA && _directionR){widget.scheduleData['direction'] = 'R';}
-                      else {widget.scheduleData['direction'] = '';}
+                      if(_directionA && _directionR){widget.lineDetail['way'] = 'A+R';}
+                      else if(_directionA && !_directionR){widget.lineDetail['way'] = 'A';}
+                      else if(!_directionA && _directionR){widget.lineDetail['way'] = 'R';}
+                      else {widget.lineDetail['way'] = '';}
                     });
                   }
               ),
@@ -367,10 +387,10 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
                   onChanged: (bool? value){
                     setState(() {
                       _directionR = value!;
-                      if(_directionA && _directionR){widget.scheduleData['direction'] = 'A+R';}
-                      else if(_directionA && !_directionR){widget.scheduleData['direction'] = 'A';}
-                      else if(!_directionA && _directionR){widget.scheduleData['direction'] = 'R';}
-                      else {widget.scheduleData['direction'] = '';}
+                      if(_directionA && _directionR){widget.lineDetail['way'] = 'A+R';}
+                      else if(_directionA && !_directionR){widget.lineDetail['way'] = 'A';}
+                      else if(!_directionA && _directionR){widget.lineDetail['way'] = 'R';}
+                      else {widget.lineDetail['way'] = '';}
                     });
                   }
               ),
