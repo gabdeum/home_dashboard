@@ -60,6 +60,12 @@ class CustomScheduleCard extends StatefulWidget {
 class _CustomScheduleCardState extends State<CustomScheduleCard> {
 
   @override
+  void initState() {
+    widget.newSchedule.timer?.cancel();
+    super.initState();
+  }
+
+  @override
   void dispose() {
     widget.newSchedule.timer?.cancel();
     super.dispose();
