@@ -7,18 +7,28 @@ import 'package:home_dashboard/services/weather.dart';
 import 'package:home_dashboard/services/customCards.dart';
 
 //ignore: must_be_immutable
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
 
-  Map? settingsData;
 
   Home({Key? key}) : super(key: key);
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+
+  Map settingsData = {
+    'weather' : FutureWeather(lat: 48.89, lon: 2.33, gmt: 1),
+    'schedules' : Schedule(lineDetails: [{'type': 'metros', 'code': '13', 'stationCode': 'Guy+Moquet', 'station': 'Guy Moquet', 'way': 'A'}])
+  };
+
+  @override
   Widget build(BuildContext context) {
 
-    final Schedule newSchedule = Schedule(lineDetails: [{'type': 'metros', 'code': '13', 'stationCode': 'Guy+Moquet', 'station': 'Guy Moquet', 'way': 'A'}]);
-    final FutureWeather newWeather = FutureWeather(lat: 48.8909971, lon: 2.3281126, gmt: 1);
-    
+    final Schedule newSchedule = settingsData['schedules'];
+    final FutureWeather newWeather = settingsData['weather'];
+
     return SafeArea(
       child: Container(
         color: MyColors().bgColor,
@@ -43,7 +53,10 @@ class Home extends StatelessWidget {
                           onPressed: (){
                             Navigator.of(context).push(createRoute()).then((value){
                               print('new: $value - current: $settingsData');
-                              settingsData = value as Map;
+                              if (value != settingsData){
+                                settingsData = value as Map;
+                                setState((){});
+                              }
                             });
                           },
                           child: const Icon(Icons.settings,),

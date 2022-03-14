@@ -4,6 +4,7 @@ import 'package:home_dashboard/services/geoLocator.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:home_dashboard/services/schedule.dart';
+import 'package:home_dashboard/services/weather.dart';
 
 class Settings extends StatefulWidget {
 
@@ -26,14 +27,13 @@ class _SettingsState extends State<Settings> {
 
     return WillPopScope(
       onWillPop: () async {
-        List _scheduleData = [];
+        List<Map> _scheduleData = [];
         for (var element in scheduleSettingCards) {
           _scheduleData.add(element.scheduleData);
         }
         Map _settingsData = {
-          'lat' : _newLoc['lat'],
-          'lon' : _newLoc['lon'],
-          'schedules' : _scheduleData
+          'weather' : FutureWeather(lat: _newLoc['lat'], lon: _newLoc['lon'], gmt: 1),
+          'schedules' : Schedule(lineDetails: _scheduleData)
         };
 
         Navigator.pop(context, _settingsData);
