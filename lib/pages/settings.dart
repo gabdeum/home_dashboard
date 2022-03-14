@@ -25,6 +25,13 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
 
+    // List<Map> _scheduleData = [];
+    // for (var element in scheduleSettingCards) {
+    //   _scheduleData.add(element.scheduleData);
+    // }
+    //
+    // print('newLoc: $_newLoc - scheduleData: $_scheduleData');
+
     return WillPopScope(
       onWillPop: () async {
         List<Map> _scheduleData = [];

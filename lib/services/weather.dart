@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 
 class FutureWeather {
 
-  double lat;
-  double lon;
+  double? lat;
+  double? lon;
   int gmt;
 
   FutureWeather({required this.lat, required this.lon, this.gmt = 0});
@@ -78,14 +78,14 @@ class FutureWeather {
         'sunset' : _sunset,
         'daily' : _daily,
       };
-
-      return weather;
-
     }
 
     catch (e){
       print(e);
     }
+
+    return weather;
+
   }
 }
 
