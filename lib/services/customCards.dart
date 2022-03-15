@@ -60,12 +60,9 @@ class CustomScheduleCard extends StatefulWidget {
 
 class _CustomScheduleCardState extends State<CustomScheduleCard> {
 
-  Stream? newScheduleStream;
-
   @override
   void initState() {
     // TODO: implement initState
-    newScheduleStream = widget.newSchedule?.getScheduleStream();
     super.initState();
   }
 
@@ -84,7 +81,7 @@ class _CustomScheduleCardState extends State<CustomScheduleCard> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
         child: StreamBuilder(
-            stream: newScheduleStream,
+            stream: widget.newSchedule?.stream,
             builder: (context, data){
               if(data.connectionState == ConnectionState.active){
                 List newStreamList = data.data as List;

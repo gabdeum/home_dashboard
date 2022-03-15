@@ -39,7 +39,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
+    newSchedule?.timer?.cancel();
     newSchedule?.lineDetails = settingsData['scheduleData'];
+    newSchedule?.getScheduleStream();
+
     newWeather?.lat = settingsData['lat'];
     newWeather?.lon = settingsData['lon'];
 

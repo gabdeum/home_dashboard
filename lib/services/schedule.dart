@@ -13,6 +13,7 @@ class Schedule {
   List<Map> stations = [];
   Map directions = {};
   Timer? timer;
+  Stream? stream;
 
   // final String url;
   Schedule({required this.lineDetails});
@@ -30,6 +31,8 @@ class Schedule {
 
         String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
             '${lineDetail['code']}/${lineDetail['stationCode']}/${lineDetail['way']}';
+
+        print('URL: $_url');
 
         try{
 
@@ -69,6 +72,7 @@ class Schedule {
       getSchedule();
     });
 
+    stream = _controller.stream;
     return _controller.stream;
 
   }
