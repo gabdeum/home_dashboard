@@ -39,8 +39,9 @@ class _SettingsState extends State<Settings> {
           _scheduleData.add(element.scheduleData);
         }
         Map _settingsData = {
-          'weather' : FutureWeather(lat: _newLoc['lat'], lon: _newLoc['lon'], gmt: 1),
-          'schedules' : Schedule(lineDetails: _scheduleData)
+          'lat' : _newLoc['lat'],
+          'lon' : _newLoc['lon'],
+          'scheduleData' : _scheduleData
         };
 
         Navigator.pop(context, _settingsData);

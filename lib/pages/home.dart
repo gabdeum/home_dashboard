@@ -9,7 +9,6 @@ import 'package:home_dashboard/services/customCards.dart';
 //ignore: must_be_immutable
 class Home extends StatefulWidget {
 
-
   Home({Key? key}) : super(key: key);
 
   @override
@@ -19,15 +18,30 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   Map settingsData = {
+    'lat' : 48.89,
+    'lon' : 2.33,
+    'scheduleData' : [{'type': 'metros', 'code': '13', 'stationCode': 'Guy+Moquet', 'station': 'Guy Moquet', 'way': 'A'}],
     'weather' : FutureWeather(lat: 48.89, lon: 2.33, gmt: 1),
     'schedules' : Schedule(lineDetails: [{'type': 'metros', 'code': '13', 'stationCode': 'Guy+Moquet', 'station': 'Guy Moquet', 'way': 'A'}])
   };
 
+  Schedule? newSchedule;
+  FutureWeather? newWeather;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    newSchedule = Schedule(lineDetails: settingsData['scheduleData']);
+    newWeather = FutureWeather(lat: settingsData['lat'], lon: settingsData['lon'], gmt: 1);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
 
-    final Schedule newSchedule = settingsData['schedules'];
-    final FutureWeather newWeather = settingsData['weather'];
+    newSchedule?.lineDetails = settingsData['scheduleData'];
+    newWeather?.lat = settingsData['lat'];
+    newWeather?.lon = settingsData['lon'];
 
     return SafeArea(
       child: Container(
@@ -52,8 +66,8 @@ class _HomeState extends State<Home> {
                           mini: true,
                           onPressed: (){
                             Navigator.of(context).push(createRoute()).then((value){
-                              print('new: $value - current: $settingsData');
                               if (value != settingsData){
+                                print('Changing data');
                                 settingsData = value as Map;
                                 setState((){});
                               }

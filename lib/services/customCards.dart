@@ -48,10 +48,11 @@ class CustomCard extends StatelessWidget {
   }
 }
 
+//ignore: must_be_immutable
 class CustomScheduleCard extends StatefulWidget {
 
-  final Schedule newSchedule;
-  const CustomScheduleCard({Key? key, required this.newSchedule}) : super(key: key);
+  Schedule? newSchedule;
+  CustomScheduleCard({Key? key, required this.newSchedule}) : super(key: key);
 
   @override
   State<CustomScheduleCard> createState() => _CustomScheduleCardState();
@@ -59,28 +60,31 @@ class CustomScheduleCard extends StatefulWidget {
 
 class _CustomScheduleCardState extends State<CustomScheduleCard> {
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    widget.newSchedule.timer?.cancel();
-    super.dispose();
-  }
+  Stream? newScheduleStream;
 
   @override
   void initState() {
     // TODO: implement initState
-    widget.newSchedule.timer?.cancel();
+    newScheduleStream = widget.newSchedule?.getScheduleStream();
     super.initState();
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    widget.newSchedule?.timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return CustomCard(
       title: 'Schedules',
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 5.0),
         child: StreamBuilder(
-            stream: widget.newSchedule.getScheduleStream(),
+            stream: newScheduleStream,
             builder: (context, data){
               if(data.connectionState == ConnectionState.active){
                 List newStreamList = data.data as List;
@@ -110,7 +114,7 @@ class CustomWeatherCard extends StatelessWidget {
     required this.newWeather,
   }) : super(key: key);
 
-  final FutureWeather newWeather;
+  final FutureWeather? newWeather;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +122,7 @@ class CustomWeatherCard extends StatelessWidget {
       child: CustomCard(
         title: 'Weather',
         child: FutureBuilder(
-          future: newWeather.getCurrentWeather(),
+          future: newWeather?.getCurrentWeather(),
           builder: (context, data){
             if (data.connectionState == ConnectionState.done && data.data != null){
               Map weather = data.data as Map;
@@ -187,7 +191,7 @@ class CustomClockCard extends StatelessWidget {
     required this.newWeather,
   }) : super(key: key);
 
-  final FutureWeather newWeather;
+  final FutureWeather? newWeather;
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +206,7 @@ class CustomClockCard extends StatelessWidget {
                 const Clock(),
                 const SizedBox(height: 20.0,),
                 FutureBuilder(
-                    future: newWeather.getCurrentWeather(),
+                    future: newWeather?.getCurrentWeather(),
                     builder: (context, data){
                       if (data.connectionState == ConnectionState.done && data.data != null){
                         Map weather = data.data as Map;

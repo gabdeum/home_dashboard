@@ -9,7 +9,7 @@ class Schedule {
   //    code (e.g. 8)
   //    station (e.g. Guy Moquet)
   //    way (Available values: A, R, A+R)
-  final List<Map> lineDetails;
+  List<Map> lineDetails;
   List<Map> stations = [];
   Map directions = {};
   Timer? timer;
