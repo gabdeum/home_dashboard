@@ -26,13 +26,12 @@ class Schedule {
 
       List _destination = []; //Direction name
       List _schedules = []; //When are the next schedules
+      List _schedulesBis = [];
 
       for (var lineDetail in lineDetails) {
 
         String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
             '${lineDetail['code']}/${lineDetail['stationCode']}/${lineDetail['way']}';
-
-        print('URL: $_url');
 
         try{
 
@@ -42,29 +41,54 @@ class Schedule {
           List _dataList = List.castFrom(_data['result']['schedules']);
 
           for (var element in _dataList) {
+
+            Map _schedule = {
+              'line' : lineDetail['code'],
+              'message' : '',
+              'destination' : ''
+            };
+            _schedule['destination'] = element['destination'].toString();
+
             _destination.add(element['destination'].toString());
 
             String message = element['message'].toString().replaceFirst(' mn', '');
-            bool isInt = int.tryParse(message) != null;
 
-            if(isInt == true){
-              String intSchedule = int.tryParse(message) != 0 ? '${(int.tryParse(message)! - 1).toString()} min' : "Train a l'approche";
+            if (int.tryParse(message) != null){
+              // String intSchedule = int.tryParse(message) != 0 ? '${(int.tryParse(message)! - 1).toString()} min' : "Train a l'approche";
+              String intSchedule = (int.tryParse(message)! - 1).toString();
+              _schedule['destination'] = intSchedule;
               _schedules.add(intSchedule);
             }
-            else{
-              _schedules.add(message);
+            else if (message == "Train a l'approche"){
+              String intSchedule = (-1).toString();
+              _schedule['destination'] = intSchedule;
+              _schedules.add(intSchedule);
             }
+            else if(message == "Train a quai"){
+              String intSchedule = (-2).toString();
+              _schedule['destination'] = intSchedule;
+              _schedules.add(intSchedule);
+            }
+
+            _schedulesBis.add(_schedule);
+
           }
         }
 
         catch (e){
+
           _destination = ['No data found'];
           _schedules = ['-'];
+          _schedulesBis.add({
+            'line' : lineDetail['code'],
+            'message' : 'No data found',
+            'destination' : '-'
+          });
           print('Request URL: $_url\nERROR: $e');
         }
-
       }
       _controller.sink.add([_schedules, _destination]);
+      // _controller.sink.add(_schedulesBis);
     }
 
     getSchedule();
