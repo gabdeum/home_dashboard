@@ -30,10 +30,12 @@ class Schedule {
 
         String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
             '${lineDetail['code']}/${lineDetail['stationCode']}/${lineDetail['way']}';
-        Response _response = await get(Uri.parse(_url));
-        Map _data = const JsonDecoder().convert(_response.body);
 
         try{
+
+          Response _response = await get(Uri.parse(_url));
+          Map _data = const JsonDecoder().convert(_response.body);
+
           List _dataList = List.castFrom(_data['result']['schedules']);
 
           for (var element in _dataList) {
@@ -55,7 +57,7 @@ class Schedule {
         catch (e){
           _destination = ['No data found'];
           _schedules = ['-'];
-          print('Request URL: $_url\nResponse body: $_data\nERROR: $e');
+          print('Request URL: $_url\nERROR: $e');
         }
 
       }
