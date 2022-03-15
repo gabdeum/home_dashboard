@@ -3,8 +3,6 @@ import 'package:home_dashboard/services/customCards.dart';
 import 'package:home_dashboard/services/geoLocator.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:home_dashboard/services/schedule.dart';
-import 'package:home_dashboard/services/weather.dart';
 
 class Settings extends StatefulWidget {
 

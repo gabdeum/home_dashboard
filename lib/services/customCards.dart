@@ -3,6 +3,7 @@ import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:home_dashboard/services/schedule.dart';
 import 'package:home_dashboard/services/weather.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'clock.dart';
 
 class CustomCard extends StatelessWidget {
@@ -245,10 +246,10 @@ class CustomScheduleSettingCard extends StatefulWidget {
 
   Map scheduleData = {
     'type' : 'metros',
-    'code' : '',
-    'station' : '',
-    'stationCode' : '',
-    'way' : ''
+    'code' : null,
+    'station' : null,
+    'stationCode' : null,
+    'way' : null
   };
 
   CustomScheduleSettingCard({Key? key}) : super(key: key);

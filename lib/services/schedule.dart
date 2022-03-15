@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:http/http.dart';
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Schedule {
 
   //List of Map with:
@@ -24,71 +26,66 @@ class Schedule {
 
     getSchedule() async {
 
-      List _destination = []; //Direction name
-      List _schedules = []; //When are the next schedules
-      List _schedulesBis = [];
+      List _schedules = [];
 
       for (var lineDetail in lineDetails) {
 
-        String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
-            '${lineDetail['code']}/${lineDetail['stationCode']}/${lineDetail['way']}';
+        if(lineDetail['code'] != null || lineDetail['stationCode'] != null || lineDetail['way'] != null){
 
-        try{
+          String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
+              '${lineDetail['code']}/${lineDetail['stationCode']}/${lineDetail['way']}';
 
-          Response _response = await get(Uri.parse(_url));
-          Map _data = const JsonDecoder().convert(_response.body);
+          try{
 
-          List _dataList = List.castFrom(_data['result']['schedules']);
+            Response _response = await get(Uri.parse(_url));
+            Map _data = const JsonDecoder().convert(_response.body);
 
-          for (var element in _dataList) {
+            List _dataList = List.castFrom(_data['result']['schedules']);
 
-            Map _schedule = {
-              'line' : lineDetail['code'],
-              'time' : 0,
-              'destination' : ''
-            };
-            _schedule['destination'] = element['destination'].toString();
+            for (var element in _dataList) {
 
-            _destination.add(element['destination'].toString());
+              Map _schedule = {
+                'line' : lineDetail['code'],
+                'time' : 0,
+                'destination' : ''
+              };
+              _schedule['destination'] = element['destination'].toString();
 
-            String message = element['message'].toString().replaceFirst(' mn', '');
+              String message = element['message'].toString().replaceFirst(' mn', '');
 
-            if (int.tryParse(message) != null){
-              int intSchedule = int.tryParse(message)! - 1;
-              _schedule['time'] = intSchedule;
-              _schedules.add(intSchedule);
+              if (int.tryParse(message) != null){
+                int intSchedule = int.tryParse(message)! - 1;
+                _schedule['time'] = intSchedule;
+              }
+              else if (message == "Train a l'approche"){
+                int intSchedule = -1;
+                _schedule['time'] = intSchedule;
+              }
+              else if(message == "Train a quai"){
+                int intSchedule = -2;
+                _schedule['time'] = intSchedule;
+              }
+
+              _schedules.add(_schedule);
+
             }
-            else if (message == "Train a l'approche"){
-              int intSchedule = -1;
-              _schedule['time'] = intSchedule;
-              _schedules.add(intSchedule);
-            }
-            else if(message == "Train a quai"){
-              int intSchedule = -2;
-              _schedule['time'] = intSchedule;
-              _schedules.add(intSchedule);
-            }
-
-            _schedulesBis.add(_schedule);
-
           }
-        }
 
-        catch (e){
+          catch (e){
 
-          _destination = ['No data found'];
-          _schedules = ['-'];
-          _schedulesBis.add({
-            'line' : lineDetail['code'],
-            'time' : -10,
-            'destination' : 'No Data'
-          });
-          print('Request URL: $_url\nERROR: $e');
+            _schedules.add({
+              'line' : lineDetail['code'],
+              'time' : -10,
+              'destination' : 'No Data'
+            });
+            print('Request URL: $_url\nERROR: $e');
+          }
+
         }
       }
 
-      _schedulesBis.sort((a, b) => (a['time']).compareTo(b['time']));
-      _controller.sink.add(_schedulesBis);
+      _schedules.sort((a, b) => (a['time']).compareTo(b['time']));
+      _controller.sink.add(_schedules);
     }
 
     getSchedule();

@@ -5,11 +5,12 @@ import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:home_dashboard/services/schedule.dart';
 import 'package:home_dashboard/services/weather.dart';
 import 'package:home_dashboard/services/customCards.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //ignore: must_be_immutable
 class Home extends StatefulWidget {
 
-  Home({Key? key}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -21,8 +22,6 @@ class _HomeState extends State<Home> {
     'lat' : 48.89,
     'lon' : 2.33,
     'scheduleData' : [{'type': 'metros', 'code': '13', 'stationCode': 'Guy+Moquet', 'station': 'Guy Moquet', 'way': 'A'}],
-    'weather' : FutureWeather(lat: 48.89, lon: 2.33, gmt: 1),
-    'schedules' : Schedule(lineDetails: [{'type': 'metros', 'code': '13', 'stationCode': 'Guy+Moquet', 'station': 'Guy Moquet', 'way': 'A'}])
   };
 
   Schedule? newSchedule;
