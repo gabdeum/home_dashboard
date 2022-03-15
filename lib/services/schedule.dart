@@ -44,7 +44,7 @@ class Schedule {
 
             Map _schedule = {
               'line' : lineDetail['code'],
-              'message' : '',
+              'time' : 0,
               'destination' : ''
             };
             _schedule['destination'] = element['destination'].toString();
@@ -54,19 +54,18 @@ class Schedule {
             String message = element['message'].toString().replaceFirst(' mn', '');
 
             if (int.tryParse(message) != null){
-              // String intSchedule = int.tryParse(message) != 0 ? '${(int.tryParse(message)! - 1).toString()} min' : "Train a l'approche";
-              String intSchedule = (int.tryParse(message)! - 1).toString();
-              _schedule['destination'] = intSchedule;
+              int intSchedule = int.tryParse(message)! - 1;
+              _schedule['time'] = intSchedule;
               _schedules.add(intSchedule);
             }
             else if (message == "Train a l'approche"){
-              String intSchedule = (-1).toString();
-              _schedule['destination'] = intSchedule;
+              int intSchedule = -1;
+              _schedule['time'] = intSchedule;
               _schedules.add(intSchedule);
             }
             else if(message == "Train a quai"){
-              String intSchedule = (-2).toString();
-              _schedule['destination'] = intSchedule;
+              int intSchedule = -2;
+              _schedule['time'] = intSchedule;
               _schedules.add(intSchedule);
             }
 
@@ -81,14 +80,15 @@ class Schedule {
           _schedules = ['-'];
           _schedulesBis.add({
             'line' : lineDetail['code'],
-            'message' : 'No data found',
-            'destination' : '-'
+            'time' : -10,
+            'destination' : 'No Data'
           });
           print('Request URL: $_url\nERROR: $e');
         }
       }
-      _controller.sink.add([_schedules, _destination]);
-      // _controller.sink.add(_schedulesBis);
+
+      _schedulesBis.sort((a, b) => (a['time']).compareTo(b['time']));
+      _controller.sink.add(_schedulesBis);
     }
 
     getSchedule();

@@ -61,12 +61,6 @@ class CustomScheduleCard extends StatefulWidget {
 class _CustomScheduleCardState extends State<CustomScheduleCard> {
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   void dispose() {
     // TODO: implement dispose
     widget.newSchedule?.timer?.cancel();
@@ -88,12 +82,17 @@ class _CustomScheduleCardState extends State<CustomScheduleCard> {
                 return ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.vertical,
-                    itemCount:newStreamList[0].length,
+                    itemCount:newStreamList.length,
                     itemBuilder: (context, index){
+                      String _message = '';
+                      if(newStreamList[index]['time'] >= 0){_message = '${newStreamList[index]['time'].toString()} min';}
+                      else if(newStreamList[index]['time'] == -1){_message = "Train a l'approche";}
+                      else if(newStreamList[index]['time'] == -2){_message = 'Train a quai';}
+                      else if(newStreamList[index]['time'] == -10){_message = 'No Data';}
                       return ListTile(
-                        leading: SvgPicture.asset('assets/m13.svg', width: 40.0, height: 40.0,),
-                        title: Text(newStreamList[1][index].toString(), style: MyTextStyle().large,),
-                        trailing: Text(newStreamList[0][index].toString(), style: MyTextStyle().large),
+                        leading: SvgPicture.asset('assets/m${newStreamList[index]['line'].toString()}.svg', width: 40.0, height: 40.0,),
+                        title: Text(newStreamList[index]['destination'].toString(), style: MyTextStyle().large,),
+                        trailing: Text(_message, style: MyTextStyle().large),
                       );
                     });
               }
