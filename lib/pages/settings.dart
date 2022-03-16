@@ -16,6 +16,7 @@ class _SettingsState extends State<Settings> {
 
   final _addressController = TextEditingController();
   Map _newLoc = {};
+  Map settingsData = {};
   dynamic _iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
 
   List<CustomScheduleSettingCard> scheduleSettingCards = [CustomScheduleSettingCard()];
@@ -23,12 +24,17 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
 
-    // List<Map> _scheduleData = [];
-    // for (var element in scheduleSettingCards) {
-    //   _scheduleData.add(element.scheduleData);
+    // if (ModalRoute.of(context)?.settings.arguments is Map) {
+    //   settingsData = ModalRoute.of(context)?.settings.arguments as Map;
+    //   if (settingsData['scheduleData'] is List<Map>) {
+    //     List<Map> scheduleData = settingsData['scheduleData'] as List<Map>;
+    //     if ((scheduleData).isNotEmpty){
+    //       for (var _element in scheduleData){
+    //         scheduleSettingCards.add(CustomScheduleSettingCard());
+    //       }
+    //     }
+    //   }
     // }
-    //
-    // print('newLoc: $_newLoc - scheduleData: $_scheduleData');
 
     return WillPopScope(
       onWillPop: () async {
@@ -36,13 +42,13 @@ class _SettingsState extends State<Settings> {
         for (var element in scheduleSettingCards) {
           _scheduleData.add(element.scheduleData);
         }
-        Map _settingsData = {
+        Map settingsData = {
           'lat' : _newLoc['lat'],
           'lon' : _newLoc['lon'],
           'scheduleData' : _scheduleData
         };
 
-        Navigator.pop(context, _settingsData);
+        Navigator.pop(context, settingsData);
         return true;
       },
       child: Scaffold(

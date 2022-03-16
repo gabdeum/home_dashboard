@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_dashboard/services/customCards.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -36,7 +37,7 @@ class _LoadingState extends State<Loading> {
 
     }
 
-    print('lat: $lat - lon: $lon - scheduleDataStr: $scheduleDataStr');
+    print('lat: $lat - lon: $lon - scheduleData: $scheduleData');
 
     Navigator.pushReplacementNamed(context, '/home', arguments: {
       'lat' : lat,
@@ -55,9 +56,34 @@ class _LoadingState extends State<Loading> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: CircularProgressIndicator(color: MyColors().darkColor1,),
-      color: MyColors().bgColor,
+    return SafeArea(
+      child: Container(
+        color: MyColors().bgColor,
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Flexible(
+                flex: 3,
+                child: CustomCard(title: 'Schedules', child: Container(),)
+              ),
+              const SizedBox(height: 2.5,),
+              Flexible(
+                flex: 4,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: CustomCard(title: 'Weather', child: Container(),)),
+                    const SizedBox(width: 2.5,),
+                    Expanded(child: CustomCard(title: 'Clock', child: Container(),)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -18,32 +18,29 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  Map settingsData = {
-    'lat' : 48.89,
-    'lon' : 2.33,
-    'scheduleData' : [{'type': 'metros', 'code': '13', 'stationCode': 'Guy+Moquet', 'station': 'Guy Moquet', 'way': 'A'}],
-  };
-
+  Map settingsData = {};
   Schedule? newSchedule;
   FutureWeather? newWeather;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    newSchedule = Schedule(lineDetails: settingsData['scheduleData']);
-    newWeather = FutureWeather(lat: settingsData['lat'], lon: settingsData['lon'], gmt: 1);
-    super.initState();
-  }
+  bool isFirstRun = true;
 
   @override
   Widget build(BuildContext context) {
 
-    newSchedule?.timer?.cancel();
-    newSchedule?.lineDetails = settingsData['scheduleData'];
-    newSchedule?.getScheduleStream();
-
-    newWeather?.lat = settingsData['lat'];
-    newWeather?.lon = settingsData['lon'];
+    if (ModalRoute.of(context)?.settings.arguments is Map && isFirstRun == true){
+      newSchedule?.timer?.cancel();
+      settingsData = (ModalRoute.of(context)?.settings.arguments as Map);
+      newSchedule = Schedule(lineDetails: settingsData['scheduleData']);
+      newSchedule?.getScheduleStream();
+      newWeather = FutureWeather(lat: settingsData['lat'], lon: settingsData['lon'], gmt: 1);
+      isFirstRun = false;
+    }
+    else{
+      newSchedule?.timer?.cancel();
+      newSchedule?.lineDetails = settingsData['scheduleData'];
+      newSchedule?.getScheduleStream();
+      newWeather?.lat = settingsData['lat'];
+      newWeather?.lon = settingsData['lon'];
+    }
 
     return SafeArea(
       child: Container(
@@ -67,9 +64,8 @@ class _HomeState extends State<Home> {
                           heroTag: 'hero0',
                           mini: true,
                           onPressed: (){
-                            Navigator.of(context).push(createRoute()).then((value){
+                            Navigator.of(context).pushNamed('/settings', arguments: settingsData).then((value){
                               if (value != settingsData){
-                                print('Changing data');
                                 settingsData = value as Map;
                                 setState((){});
                               }
