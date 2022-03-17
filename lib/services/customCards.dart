@@ -244,15 +244,9 @@ class CustomClockCard extends StatelessWidget {
 //ignore: must_be_immutable
 class CustomScheduleSettingCard extends StatefulWidget {
 
-  Map scheduleData = {
-    'type' : 'metros',
-    'code' : null,
-    'station' : null,
-    'stationCode' : null,
-    'way' : null
-  };
+  Map scheduleData;
 
-  CustomScheduleSettingCard({Key? key}) : super(key: key);
+  CustomScheduleSettingCard({this.scheduleData = const {}, Key? key}) : super(key: key); //'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null
 
   @override
   _CustomScheduleSettingCardState createState() => _CustomScheduleSettingCardState();
@@ -269,6 +263,32 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
 
   List _stations = [];
   Map _directions = {};
+
+  @override
+  void initState() {
+    if (widget.scheduleData.isNotEmpty){
+      _lineSelection = int.tryParse(widget.scheduleData['code']);
+      // _stationSelection = {
+      //   'name' : widget.scheduleData['station'],
+      //   'slug' : widget.scheduleData['stationCode']
+      // };
+      if(widget.scheduleData['way'] == 'A+R'){_directionA = true; _directionR = true;}
+      else if(widget.scheduleData['way'] == 'A'){_directionA = true;}
+      else if(widget.scheduleData['way'] == 'R'){_directionR = true;}
+      Schedule _newSchedule = Schedule(lineDetails: [{
+        'type' : 'metros',
+        'code' : widget.scheduleData['code']
+      }]);
+      _newSchedule.getStations().then((value1){
+        _stations = value1 as List;
+        _newSchedule.getDirections().then((value2){
+          _directions = value2 as Map;
+          setState(() {});
+        });
+      });
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

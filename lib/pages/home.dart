@@ -5,42 +5,37 @@ import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:home_dashboard/services/schedule.dart';
 import 'package:home_dashboard/services/weather.dart';
 import 'package:home_dashboard/services/customCards.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 //ignore: must_be_immutable
 class Home extends StatefulWidget {
 
-  const Home({Key? key}) : super(key: key);
-
+  Map settingsData;
+  Home({this.settingsData = const {}, Key? key}) : super(key: key);
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
 
-  Map settingsData = {};
   Schedule? newSchedule;
   FutureWeather? newWeather;
-  bool isFirstRun = true;
+
+  @override
+  void initState() {
+    newSchedule = Schedule(lineDetails: widget.settingsData['scheduleData']);
+    newSchedule?.getScheduleStream();
+    newWeather = FutureWeather(lat: widget.settingsData['lat'], lon: widget.settingsData['lon'], gmt: 1);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    if (ModalRoute.of(context)?.settings.arguments is Map && isFirstRun == true){
-      newSchedule?.timer?.cancel();
-      settingsData = (ModalRoute.of(context)?.settings.arguments as Map);
-      newSchedule = Schedule(lineDetails: settingsData['scheduleData']);
-      newSchedule?.getScheduleStream();
-      newWeather = FutureWeather(lat: settingsData['lat'], lon: settingsData['lon'], gmt: 1);
-      isFirstRun = false;
-    }
-    else{
-      newSchedule?.timer?.cancel();
-      newSchedule?.lineDetails = settingsData['scheduleData'];
-      newSchedule?.getScheduleStream();
-      newWeather?.lat = settingsData['lat'];
-      newWeather?.lon = settingsData['lon'];
-    }
+    newSchedule?.timer?.cancel();
+    newSchedule?.lineDetails = widget.settingsData['scheduleData'];
+    newSchedule?.getScheduleStream();
+    newWeather?.lat = widget.settingsData['lat'];
+    newWeather?.lon = widget.settingsData['lon'];
 
     return SafeArea(
       child: Container(
@@ -64,12 +59,18 @@ class _HomeState extends State<Home> {
                           heroTag: 'hero0',
                           mini: true,
                           onPressed: (){
-                            Navigator.of(context).pushNamed('/settings', arguments: settingsData).then((value){
-                              if (value != settingsData){
-                                settingsData = value as Map;
+                            Navigator.of(context).push(createRoute(widget.settingsData)).then((value){
+                              if (value != widget.settingsData){
+                                widget.settingsData = value as Map;
                                 setState((){});
                               }
                             });
+                            // Navigator.of(context).pushNamed('/settings', arguments: widget.settingsData).then((value){
+                            //   if (value != widget.settingsData){
+                            //     widget.settingsData = value as Map;
+                            //     setState((){});
+                            //   }
+                            // });
                           },
                           child: const Icon(Icons.settings,),
                           backgroundColor: MyColors().darkColor1,
@@ -99,9 +100,9 @@ class _HomeState extends State<Home> {
   }
 }
 
-Route createRoute() {
+Route createRoute(Map settingsData) {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => const Settings(),
+    pageBuilder: (context, animation, secondaryAnimation) => Settings(settingsData: settingsData,),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
       const end = Offset.zero;

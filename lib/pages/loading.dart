@@ -4,6 +4,8 @@ import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+import 'home.dart';
+
 class Loading extends StatefulWidget {
   const Loading({Key? key}) : super(key: key);
 
@@ -39,12 +41,14 @@ class _LoadingState extends State<Loading> {
 
     print('lat: $lat - lon: $lon - scheduleData: $scheduleData');
 
-    Navigator.pushReplacementNamed(context, '/home', arguments: {
-      'lat' : lat,
-      'lon' : lon,
-      'scheduleData' : scheduleData
-    });
-
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) {
+          return Home(settingsData: {
+        'lat' : lat,
+        'lon' : lon,
+        'scheduleData' : scheduleData
+          },);
+    },));
   }
 
   @override

@@ -4,9 +4,12 @@ import 'package:home_dashboard/services/geoLocator.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:geolocator/geolocator.dart';
 
+//ignore: must_be_immutable
 class Settings extends StatefulWidget {
 
-  const Settings({Key? key}) : super(key: key);
+  Map settingsData;
+
+  Settings({this.settingsData = const {}, Key? key}) : super(key: key);
 
   @override
   State<Settings> createState() => _SettingsState();
@@ -19,22 +22,24 @@ class _SettingsState extends State<Settings> {
   Map settingsData = {};
   dynamic _iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
 
-  List<CustomScheduleSettingCard> scheduleSettingCards = [CustomScheduleSettingCard()];
+  List<CustomScheduleSettingCard> scheduleSettingCards = [];
+
+  @override
+  void initState() {
+    if(widget.settingsData['scheduleData'] is List){
+      List<Map> scheduleData = widget.settingsData['scheduleData'];
+      for (var element in scheduleData) {
+        scheduleSettingCards.add(CustomScheduleSettingCard(scheduleData: element,));
+      }
+    }
+    else {
+      scheduleSettingCards = [CustomScheduleSettingCard()];
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    // if (ModalRoute.of(context)?.settings.arguments is Map) {
-    //   settingsData = ModalRoute.of(context)?.settings.arguments as Map;
-    //   if (settingsData['scheduleData'] is List<Map>) {
-    //     List<Map> scheduleData = settingsData['scheduleData'] as List<Map>;
-    //     if ((scheduleData).isNotEmpty){
-    //       for (var _element in scheduleData){
-    //         scheduleSettingCards.add(CustomScheduleSettingCard());
-    //       }
-    //     }
-    //   }
-    // }
 
     return WillPopScope(
       onWillPop: () async {
