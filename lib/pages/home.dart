@@ -60,8 +60,9 @@ class _HomeState extends State<Home> {
                           mini: true,
                           onPressed: (){
                             Navigator.of(context).push(createRoute(widget.settingsData)).then((value){
-                              if (value != widget.settingsData){
+                              if (value.toString() != widget.settingsData.toString()){
                                 widget.settingsData = value as Map;
+                                print('$value - ${widget.settingsData}');
                                 setState((){});
                               }
                             });
