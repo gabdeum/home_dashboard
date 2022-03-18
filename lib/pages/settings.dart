@@ -33,7 +33,7 @@ class _SettingsState extends State<Settings> {
       }
     }
     else {
-      scheduleSettingCards = [CustomScheduleSettingCard()];
+      scheduleSettingCards = [CustomScheduleSettingCard(scheduleData: {'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null})];
     }
     super.initState();
   }
@@ -109,7 +109,7 @@ class _SettingsState extends State<Settings> {
                       elevation: 0.0,
                       onPressed: (){
                         setState(() {
-                          scheduleSettingCards.add(CustomScheduleSettingCard());
+                          scheduleSettingCards.add(CustomScheduleSettingCard(scheduleData: {'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null}));
                         });
                       },
                       child: const Icon(Icons.add),

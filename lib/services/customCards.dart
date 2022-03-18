@@ -246,7 +246,7 @@ class CustomScheduleSettingCard extends StatefulWidget {
 
   Map scheduleData;
 
-  CustomScheduleSettingCard({this.scheduleData = const {}, Key? key}) : super(key: key); //'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null
+  CustomScheduleSettingCard({required this.scheduleData, Key? key}) : super(key: key); //'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null
 
   @override
   _CustomScheduleSettingCardState createState() => _CustomScheduleSettingCardState();
@@ -266,8 +266,8 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
 
   @override
   void initState() {
-    if (widget.scheduleData.isNotEmpty){
-      _lineSelection = int.tryParse(widget.scheduleData['code']);
+    if (widget.scheduleData['code'] != null && widget.scheduleData['station'] != null && widget.scheduleData['way'] != null){
+      _lineSelection = widget.scheduleData['code'];
       // _stationSelection = {
       //   'name' : widget.scheduleData['station'],
       //   'slug' : widget.scheduleData['stationCode']
@@ -332,7 +332,7 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
               }
               Schedule _newSchedule = Schedule(lineDetails: [{
                 'type' : 'metros',
-                'code' : '$_newValue'
+                'code' : _newValue
               }]);
               _stations = await _newSchedule.getStations() as List;
               _directions = await _newSchedule.getDirections() as Map;

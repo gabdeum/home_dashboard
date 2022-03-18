@@ -40,6 +40,7 @@ class _LoadingState extends State<Loading> {
     }
 
     print('lat: $lat - lon: $lon - scheduleData: $scheduleData');
+    print(scheduleData[0]['code'].runtimeType);
 
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) {
