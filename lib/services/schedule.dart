@@ -114,8 +114,8 @@ class Schedule {
 
         for (var element in _dataList) {
           _destination.add({
-            'name' : element['name'],
-            'slug' : element['slug']
+            'name' : element['name'].toString(),
+            'slug' : element['slug'].toString()
           });
         }
       }

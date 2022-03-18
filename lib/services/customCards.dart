@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -264,14 +265,9 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
   List _stations = [];
   Map _directions = {};
 
-  @override
-  void initState() {
+  initializeData() async {
     if (widget.scheduleData['code'] != null && widget.scheduleData['station'] != null && widget.scheduleData['way'] != null){
       _lineSelection = widget.scheduleData['code'];
-      // _stationSelection = {
-      //   'name' : widget.scheduleData['station'],
-      //   'slug' : widget.scheduleData['stationCode']
-      // };
       if(widget.scheduleData['way'] == 'A+R'){_directionA = true; _directionR = true;}
       else if(widget.scheduleData['way'] == 'A'){_directionA = true;}
       else if(widget.scheduleData['way'] == 'R'){_directionR = true;}
@@ -279,14 +275,32 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
         'type' : 'metros',
         'code' : widget.scheduleData['code']
       }]);
-      _newSchedule.getStations().then((value1){
-        _stations = value1 as List;
-        _newSchedule.getDirections().then((value2){
-          _directions = value2 as Map;
-          setState(() {});
-        });
-      });
+      await _newSchedule.getStations().then((value){_stations = value as List;});
+      await _newSchedule.getDirections().then((value){_directions = value as Map;});
+
+      _stations.forEach((element) {if(element['slug'] == widget.scheduleData['stationCode']){_stationSelection = element;}});
+
+      setState(() {});
+
+      // print(_stationSelection);
+      // print(_stations[18].toString());
+
+      // for (var element in _stations){
+      //   if(element == _stationSelection){
+      //     print('YOUPI');
+      //   }
+      //   else{
+      //     print('$element - $_stationSelection');
+      //   }
+      // }
+
+
     }
+  }
+
+  @override
+  void initState() {
+    initializeData();
     super.initState();
   }
 
