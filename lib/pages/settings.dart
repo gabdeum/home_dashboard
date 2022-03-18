@@ -3,6 +3,8 @@ import 'package:home_dashboard/services/customCards.dart';
 import 'package:home_dashboard/services/geoLocator.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 //ignore: must_be_immutable
 class Settings extends StatefulWidget {
@@ -24,6 +26,24 @@ class _SettingsState extends State<Settings> {
 
   List<CustomScheduleSettingCard> scheduleSettingCards = [];
 
+  void setSharedPreferences(double lat, double lon, List<Map> scheduleData) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('lat', lat);
+    prefs.setDouble('lon', lon);
+
+    List<String> scheduleDataStr = [];
+    for (var element in scheduleData){
+      scheduleDataStr.add(json.encode(element));
+    }
+
+    prefs.setStringList('scheduleData', scheduleDataStr);
+  }
+
+  initializeLocation() async {
+    _newLoc = await GeoLoc(latitude: widget.settingsData['lat'], longitude: widget.settingsData['lon']).getLocFromLatLong();
+    setState(() {});
+  }
+
   @override
   void initState() {
     if(widget.settingsData['scheduleData'] is List){
@@ -35,6 +55,7 @@ class _SettingsState extends State<Settings> {
     else {
       scheduleSettingCards = [CustomScheduleSettingCard(scheduleData: {'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null})];
     }
+    initializeLocation();
     super.initState();
   }
 
@@ -48,10 +69,11 @@ class _SettingsState extends State<Settings> {
           _scheduleData.add(element.scheduleData);
         }
         Map settingsData = {
-          'lat' : _newLoc['lat'],
-          'lon' : _newLoc['lon'],
-          'scheduleData' : _scheduleData
+          "lat" : _newLoc['lat'] ?? 0.0,
+          "lon" : _newLoc['lon'] ?? 0.0,
+          "scheduleData" : _scheduleData
         };
+        setSharedPreferences(_newLoc['lat'] ?? 0.0, _newLoc['lon'] ?? 0.0, _scheduleData);
 
         Navigator.pop(context, settingsData);
         return true;

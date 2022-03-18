@@ -22,8 +22,6 @@ class _LoadingState extends State<Loading> {
     final double lon = prefs.getDouble('lon') ?? 0.0;
     final List<String> scheduleDataStr = prefs.getStringList('scheduleData') ?? [];
 
-    prefs.setStringList('scheduleData', ['{"type": "metros", "code": 13, "stationCode": "guy+moquet", "station": "Guy-Moquet", "way": "A"}']);
-
     List<Map> scheduleData = [];
 
     for (var element in scheduleDataStr){
@@ -44,9 +42,9 @@ class _LoadingState extends State<Loading> {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) {
           return Home(settingsData: {
-        'lat' : lat,
-        'lon' : lon,
-        'scheduleData' : scheduleData
+        "lat" : lat,
+        "lon" : lon,
+        "scheduleData" : scheduleData
           },);
     },));
   }

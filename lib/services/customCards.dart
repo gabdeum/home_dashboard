@@ -4,7 +4,6 @@ import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:home_dashboard/services/schedule.dart';
 import 'package:home_dashboard/services/weather.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'clock.dart';
 
 class CustomCard extends StatelessWidget {
@@ -281,20 +280,6 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
       _stations.forEach((element) {if(element['slug'] == widget.scheduleData['stationCode']){_stationSelection = element;}});
 
       setState(() {});
-
-      // print(_stationSelection);
-      // print(_stations[18].toString());
-
-      // for (var element in _stations){
-      //   if(element == _stationSelection){
-      //     print('YOUPI');
-      //   }
-      //   else{
-      //     print('$element - $_stationSelection');
-      //   }
-      // }
-
-
     }
   }
 
