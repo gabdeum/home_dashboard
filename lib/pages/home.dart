@@ -58,21 +58,9 @@ class _HomeState extends State<Home> {
                         child: FloatingActionButton(
                           heroTag: 'hero0',
                           mini: true,
-                          onPressed: (){
-                            Navigator.of(context).push(createRoute(widget.settingsData)).then((value){
-                              if (value.toString() != widget.settingsData.toString()){
-                                widget.settingsData = value as Map;
-                                print('$value - ${widget.settingsData}');
-                                setState((){});
-                              }
-                            });
-                            // Navigator.of(context).pushNamed('/settings', arguments: widget.settingsData).then((value){
-                            //   if (value != widget.settingsData){
-                            //     widget.settingsData = value as Map;
-                            //     setState((){});
-                            //   }
-                            // });
-                          },
+                          onPressed: (){Navigator.of(context).push(createRoute(widget.settingsData)).then((value){
+                            setState((){widget.settingsData = value;});
+                          });},
                           child: const Icon(Icons.settings,),
                           backgroundColor: MyColors().darkColor1,
                         ),

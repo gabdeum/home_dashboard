@@ -68,14 +68,14 @@ class _SettingsState extends State<Settings> {
         for (var element in scheduleSettingCards) {
           _scheduleData.add(element.scheduleData);
         }
-        Map settingsData = {
+        Map _settingsData = {
           "lat" : _newLoc['lat'] ?? 0.0,
           "lon" : _newLoc['lon'] ?? 0.0,
           "scheduleData" : _scheduleData
         };
         setSharedPreferences(_newLoc['lat'] ?? 0.0, _newLoc['lon'] ?? 0.0, _scheduleData);
 
-        Navigator.pop(context, settingsData);
+        Navigator.pop(context, _settingsData);
         return true;
       },
       child: Scaffold(
