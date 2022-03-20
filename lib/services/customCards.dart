@@ -296,7 +296,6 @@ class _CustomScheduleSettingCardState extends State<CustomScheduleSettingCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const SizedBox(height: 20.0,),
         SizedBox(
           height: 55.0,
           width: 190.0,

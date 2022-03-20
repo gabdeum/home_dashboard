@@ -24,7 +24,7 @@ class _SettingsState extends State<Settings> {
   Map settingsData = {};
   dynamic _iconSearchLocation = Icon(Icons.location_searching, color: MyColors().textColor,);
 
-  List<CustomScheduleSettingCard> scheduleSettingCards = [];
+  List<Widget> scheduleSettingCards = [];
 
   void setSharedPreferences(double lat, double lon, List<Map> scheduleData) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -49,12 +49,30 @@ class _SettingsState extends State<Settings> {
     if(widget.settingsData['scheduleData'] is List){
       List<Map> scheduleData = widget.settingsData['scheduleData'];
       for (var element in scheduleData) {
+        scheduleSettingCards.add(const SizedBox(height: 20.0,),);
         scheduleSettingCards.add(CustomScheduleSettingCard(scheduleData: element,));
       }
     }
     else {
       scheduleSettingCards = [CustomScheduleSettingCard(scheduleData: {'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null})];
     }
+    scheduleSettingCards.add(const SizedBox(height: 10.0,));
+    scheduleSettingCards.add(
+      Center(child: FloatingActionButton(
+        elevation: 0.0,
+        onPressed: (){
+          setState(() {
+            scheduleSettingCards.insertAll(scheduleSettingCards.length-2, [
+              const SizedBox(height: 20.0,),
+              CustomScheduleSettingCard(scheduleData: {'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null})
+            ]);
+          });
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: MyColors().color1,
+      )),
+    );
+
     initializeLocation();
     super.initState();
   }
@@ -66,7 +84,9 @@ class _SettingsState extends State<Settings> {
       onWillPop: () async {
         List<Map> _scheduleData = [];
         for (var element in scheduleSettingCards) {
-          _scheduleData.add(element.scheduleData);
+          if (element is CustomScheduleSettingCard){
+            _scheduleData.add(element.scheduleData);
+          }
         }
         Map _settingsData = {
           "lat" : _newLoc['lat'] ?? 0.0,
@@ -105,7 +125,7 @@ class _SettingsState extends State<Settings> {
                         itemBuilder: (context, index){
                           return Stack(
                             children: [
-                              index == 0 ? Container(height: 0.0,) :
+                              (index == 1 || scheduleSettingCards[index] is !CustomScheduleSettingCard) ? Container(height: 0.0,) :
                               Positioned(top: 1.0, right: 1.0, child: SizedBox(
                                 height: 33.0,
                                 width: 33.0,
@@ -126,17 +146,6 @@ class _SettingsState extends State<Settings> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 10.0,),
-                    Center(child: FloatingActionButton(
-                      elevation: 0.0,
-                      onPressed: (){
-                        setState(() {
-                          scheduleSettingCards.add(CustomScheduleSettingCard(scheduleData: {'type' : 'metros', 'code' : null, 'station' : null, 'stationCode' : null, 'way' : null}));
-                        });
-                      },
-                      child: const Icon(Icons.add),
-                      backgroundColor: MyColors().color1,
-                    )),
                   ],
                 ),
               ),
