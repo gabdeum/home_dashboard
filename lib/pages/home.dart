@@ -55,14 +55,26 @@ class _HomeState extends State<Home> {
                       top: 0,
                       child: Padding(
                         padding: const EdgeInsets.all(30.0),
-                        child: FloatingActionButton(
-                          heroTag: 'hero0',
-                          mini: true,
-                          onPressed: (){Navigator.of(context).push(createRoute(widget.settingsData)).then((value){
-                            setState((){widget.settingsData = value;});
-                          });},
-                          child: const Icon(Icons.settings,),
-                          backgroundColor: MyColors().darkColor1,
+                        child: Row(
+                          children: [
+                            FloatingActionButton(
+                              heroTag: 'hero10',
+                              mini: true,
+                              onPressed: (){setState(() {});},
+                              child: const Icon(Icons.wifi_protected_setup,),
+                              backgroundColor: MyColors().darkColor1,
+                            ),
+                            const SizedBox(width: 10.0,),
+                            FloatingActionButton(
+                              heroTag: 'hero0',
+                              mini: true,
+                              onPressed: (){Navigator.of(context).push(createRoute(widget.settingsData)).then((value){
+                                setState((){widget.settingsData = value;});
+                              });},
+                              child: const Icon(Icons.settings,),
+                              backgroundColor: MyColors().darkColor1,
+                            ),
+                          ],
                         ),
                       ),
                     )
