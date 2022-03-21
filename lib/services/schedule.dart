@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
@@ -32,22 +33,48 @@ class Schedule {
 
         if(lineDetail['code'] != null || lineDetail['stationCode'] != null || lineDetail['way'] != null){
 
-          String _url = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
+          String _urlSchedule = 'https://api-ratp.pierre-grimaud.fr/v4/schedules/${lineDetail['type']}/'
               '${lineDetail['code']}/${lineDetail['stationCode']}/${lineDetail['way']}';
+
+          String _urlTraffic = 'https://api-ratp.pierre-grimaud.fr/v4/traffic/${lineDetail['type']}/'
+              '${lineDetail['code']}';
 
           try{
 
-            Response _response = await get(Uri.parse(_url));
-            Map _data = const JsonDecoder().convert(_response.body);
+            Response _responseSchedule = await get(Uri.parse(_urlSchedule));
+            Map _dataSchedule = const JsonDecoder().convert(_responseSchedule.body);
 
-            List _dataList = List.castFrom(_data['result']['schedules']);
+            List _dataListSchedule = List.castFrom(_dataSchedule['result']['schedules']);
 
-            for (var element in _dataList) {
+            Response _responseTraffic = await get(Uri.parse(_urlTraffic));
+            Map _dataTraffic = const JsonDecoder().convert(_responseTraffic.body)['result'];
+
+            Map _traffic = {};
+            Icon? _iconTraffic;
+
+            if (_dataTraffic['title'] == 'Trafic normal'){
+              _iconTraffic = const Icon(Icons.check);
+            }
+            else if (_dataTraffic['title'] == 'Travaux'){
+              _iconTraffic = const Icon(Icons.construction);
+            }
+            else {
+              _iconTraffic = const Icon(Icons.warning_amber);
+            }
+
+            _traffic = {
+              'icon' : _iconTraffic,
+              'title' : _dataTraffic['title'],
+              'message' : _dataTraffic['message']
+            };
+
+            for (var element in _dataListSchedule) {
 
               Map _schedule = {
                 'line' : lineDetail['code'],
                 'time' : 0,
-                'destination' : ''
+                'destination' : '',
+                'traffic' : _traffic
               };
               _schedule['destination'] = element['destination'].toString();
 
@@ -78,13 +105,13 @@ class Schedule {
               'time' : -10,
               'destination' : 'No Data'
             });
-            print('Request URL: $_url\nERROR: $e');
+            print('Request URL: $_urlSchedule\nERROR: $e');
           }
-
         }
       }
 
       _schedules.sort((a, b) => (a['time']).compareTo(b['time']));
+
       _controller.sink.add(_schedules);
     }
 
