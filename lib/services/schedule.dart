@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:home_dashboard/services/formatClasses.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 
@@ -39,27 +40,25 @@ class Schedule {
           String _urlTraffic = 'https://api-ratp.pierre-grimaud.fr/v4/traffic/${lineDetail['type']}/'
               '${lineDetail['code']}';
 
+          Map _traffic = {};
+
           try{
-
-            Response _responseSchedule = await get(Uri.parse(_urlSchedule));
-            Map _dataSchedule = const JsonDecoder().convert(_responseSchedule.body);
-
-            List _dataListSchedule = List.castFrom(_dataSchedule['result']['schedules']);
-
             Response _responseTraffic = await get(Uri.parse(_urlTraffic));
             Map _dataTraffic = const JsonDecoder().convert(_responseTraffic.body)['result'];
 
-            Map _traffic = {};
             Icon? _iconTraffic;
 
             if (_dataTraffic['title'] == 'Trafic normal'){
-              _iconTraffic = const Icon(Icons.check);
+              _iconTraffic = const Icon(Icons.check_circle, color: Colors.green,);
             }
             else if (_dataTraffic['title'] == 'Travaux'){
-              _iconTraffic = const Icon(Icons.construction);
+              _iconTraffic = const Icon(Icons.construction_outlined, color: Colors.amberAccent,);
+            }
+            else if (_dataTraffic['title'] == null){
+              _iconTraffic = Icon(Icons.quiz, color: MyColors().textColor,);
             }
             else {
-              _iconTraffic = const Icon(Icons.warning_amber);
+              _iconTraffic = const Icon(Icons.warning_amber, color: Colors.redAccent,);
             }
 
             _traffic = {
@@ -67,6 +66,22 @@ class Schedule {
               'title' : _dataTraffic['title'],
               'message' : _dataTraffic['message']
             };
+          }
+
+          catch(e){
+            print(e);
+            _traffic = {
+              'icon' : Icon(Icons.quiz, color: MyColors().textColor,),
+              'title' : 'Error',
+              'message' : 'No data received'
+              };
+          }
+
+          try{
+            Response _responseSchedule = await get(Uri.parse(_urlSchedule));
+            Map _dataSchedule = const JsonDecoder().convert(_responseSchedule.body);
+
+            List _dataListSchedule = List.castFrom(_dataSchedule['result']['schedules']);
 
             for (var element in _dataListSchedule) {
 
@@ -84,12 +99,16 @@ class Schedule {
                 int intSchedule = int.tryParse(message)! - 1;
                 _schedule['time'] = intSchedule;
               }
-              else if (message == "Train a l'approche"){
+              else if (message == "Train retarde"){
                 int intSchedule = -1;
                 _schedule['time'] = intSchedule;
               }
-              else if(message == "Train a quai"){
+              else if(message == "Train a l'approche"){
                 int intSchedule = -2;
+                _schedule['time'] = intSchedule;
+              }
+              else if(message == "Train a quai"){
+                int intSchedule = -3;
                 _schedule['time'] = intSchedule;
               }
 
@@ -99,11 +118,11 @@ class Schedule {
           }
 
           catch (e){
-
             _schedules.add({
               'line' : lineDetail['code'],
               'time' : -10,
-              'destination' : 'No Data'
+              'destination' : 'No Data',
+              'traffic' : _traffic
             });
             print('Request URL: $_urlSchedule\nERROR: $e');
           }

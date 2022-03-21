@@ -61,7 +61,7 @@ class _HomeState extends State<Home> {
                               heroTag: 'hero10',
                               mini: true,
                               onPressed: (){setState(() {});},
-                              child: const Icon(Icons.wifi_protected_setup,),
+                              child: const Icon(Icons.sync,),
                               backgroundColor: MyColors().darkColor1,
                             ),
                             const SizedBox(width: 10.0,),
@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
                               onPressed: (){Navigator.of(context).push(createRoute(widget.settingsData)).then((value){
                                 setState((){widget.settingsData = value;});
                               });},
-                              child: const Icon(Icons.settings,),
+                              child: const Icon(Icons.settings_outlined,),
                               backgroundColor: MyColors().darkColor1,
                             ),
                           ],

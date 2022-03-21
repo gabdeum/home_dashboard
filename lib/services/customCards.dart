@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:home_dashboard/services/formatClasses.dart';
@@ -87,13 +88,43 @@ class _CustomScheduleCardState extends State<CustomScheduleCard> {
                     itemBuilder: (context, index){
                       String _message = '';
                       if(newStreamList[index]['time'] >= 0){_message = '${newStreamList[index]['time'].toString()} min';}
-                      else if(newStreamList[index]['time'] == -1){_message = "Train a l'approche";}
-                      else if(newStreamList[index]['time'] == -2){_message = 'Train a quai';}
-                      else if(newStreamList[index]['time'] == -10){_message = 'No Data';}
+                      else if(newStreamList[index]['time'] == -1){_message = "Train retarde";}
+                      else if(newStreamList[index]['time'] == -2){_message = "Train a l'approche";}
+                      else if(newStreamList[index]['time'] == -3){_message = "Train a quai";}
+                      else if(newStreamList[index]['time'] == -10){_message = "No Data";}
                       return ListTile(
                         leading: SvgPicture.asset('assets/subway/m${newStreamList[index]['line'].toString()}.svg', width: 40.0, height: 40.0,),
                         title: Text(newStreamList[index]['destination'].toString(), style: MyTextStyle().large,),
-                        trailing: Text(_message, style: MyTextStyle().large),
+                        trailing: SizedBox(
+                          width: 400,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(_message, style: MyTextStyle().large),
+                              const SizedBox(width: 10.0,),
+                              SizedBox(
+                                width: 40.0,
+                                height: 40.0,
+                                child: TextButton(
+                                  onPressed: () => showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) => AlertDialog(
+                                      title: Text(newStreamList[index]['traffic']['title'] ?? ''),
+                                      content: Text(newStreamList[index]['traffic']['message'] ?? ''),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, 'OK'),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Center(child: newStreamList[index]['traffic']['icon'] ?? const SizedBox(width: 40.0,)),
+                                )
+                              )
+                            ],
+                          ),
+                        ),
                       );
                     });
               }
