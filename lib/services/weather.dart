@@ -28,8 +28,8 @@ class FutureWeather {
     '11n' : 'thunderstorms-night.svg',
     '13d' : 'snow.svg',
     '13n' : 'snow.svg',
-    '50d' : 'mist.svg',
-    '50n' : 'mist.svg'
+    '50d' : 'fog.svg',
+    '50n' : 'fog.svg'
   };
 
   Future getCurrentWeather() async {
@@ -53,7 +53,7 @@ class FutureWeather {
 
         Map _dailyWeather = {
           'day' : _day,
-          'icon' : 'assets/${weatherIcons['${_dailyData[i]['weather'][0]['icon']}']}',
+          'icon' : 'assets/weather/${weatherIcons['${_dailyData[i]['weather'][0]['icon']}']}',
           'min' : (_dailyData[i]['temp']['min'] as num).round().toString(),
           'max' : (_dailyData[i]['temp']['max'] as num).round().toString()
         };
@@ -73,7 +73,7 @@ class FutureWeather {
         'currentTemp' : (_data['current']['temp'] as num).round().toString(),
         'min' : (_data['daily'][0]['temp']['min'] as num).round().toString(),
         'max' : (_data['daily'][0]['temp']['max'] as num).round().toString(),
-        'icon' : 'assets/${weatherIcons['${_data['current']['weather'][0]['icon']}']}',
+        'icon' : 'assets/weather/${weatherIcons['${_data['current']['weather'][0]['icon']}']}',
         'sunrise' : _sunrise,
         'sunset' : _sunset,
         'daily' : _daily,

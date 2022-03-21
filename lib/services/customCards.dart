@@ -91,7 +91,7 @@ class _CustomScheduleCardState extends State<CustomScheduleCard> {
                       else if(newStreamList[index]['time'] == -2){_message = 'Train a quai';}
                       else if(newStreamList[index]['time'] == -10){_message = 'No Data';}
                       return ListTile(
-                        leading: SvgPicture.asset('assets/m${newStreamList[index]['line'].toString()}.svg', width: 40.0, height: 40.0,),
+                        leading: SvgPicture.asset('assets/subway/m${newStreamList[index]['line'].toString()}.svg', width: 40.0, height: 40.0,),
                         title: Text(newStreamList[index]['destination'].toString(), style: MyTextStyle().large,),
                         trailing: Text(_message, style: MyTextStyle().large),
                       );
@@ -213,7 +213,7 @@ class CustomClockCard extends StatelessWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SvgPicture.asset('assets/sunrise.svg', height: 60.0,),
+                                SvgPicture.asset('assets/weather/sunrise.svg', height: 60.0,),
                                 Text('${weather['sunrise']}', textAlign: TextAlign.center,style: MyTextStyle().medium,)
                               ],
                             ),
@@ -221,7 +221,7 @@ class CustomClockCard extends StatelessWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SvgPicture.asset('assets/sunset.svg', height: 60.0,),
+                                SvgPicture.asset('assets/weather/sunset.svg', height: 60.0,),
                                 Text('${weather['sunset']}', textAlign: TextAlign.center,style: MyTextStyle().medium,)
                               ],
                             )
